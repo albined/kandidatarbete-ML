@@ -10,9 +10,11 @@ import os
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 
-def test_score_matrix(onlytest=False):
-    hidden_layer_sizes = [8, 16, 32, 64, 128, 256]
-    k_list = [1, 2, 3, 5, 8, 14, 20, 28, 64, 128]
+def test_score_matrix(onlytest=False, hidden_layer_sizes=None, k_list=None):
+    if hidden_layer_sizes is None:
+        hidden_layer_sizes = [8, 16, 32, 64, 128, 256]
+    if k_list is None:
+        k_list = [1, 2, 3, 5, 8, 14, 20, 28, 64, 128]
 
     training_time_array = np.zeros([len(hidden_layer_sizes), len(k_list)])
     testing_time_array = np.zeros([len(hidden_layer_sizes), len(k_list)])
@@ -44,9 +46,11 @@ def test_score_matrix(onlytest=False):
                      'score_testing_accuracy.csv'), sep=';')
 
 
-def test_u_v_matrix(u_v, onlytest=False):
-    hidden_layer_sizes = [16, 64, 256]
-    k_list = [1, 2, 3, 5, 8, 14, 20]  # Max k=28 på den här eftersom bilden är max 28x28 px
+def test_u_v_matrix(u_v, onlytest=False, hidden_layer_sizes=None, k_list=None):
+    if hidden_layer_sizes is None:
+        hidden_layer_sizes = [16, 64, 256]
+    if k_list is None:
+        k_list = [1, 2, 3, 5, 8, 14, 20]
 
     training_time_array = np.zeros([len(hidden_layer_sizes), len(k_list)])
     testing_time_array = np.zeros([len(hidden_layer_sizes), len(k_list)])
@@ -78,8 +82,9 @@ def test_u_v_matrix(u_v, onlytest=False):
                      f'{u_v.lower()}_testing_accuracy.csv'), sep=';')
 
 
-def test_normal_matrix(onlytest=False):
-    hidden_layer_sizes = [8, 16, 32, 64, 128, 256]
+def test_normal_matrix(onlytest=False, hidden_layer_sizes=None):
+    if hidden_layer_sizes is None:
+        hidden_layer_sizes = [8, 16, 32, 64, 128, 256]
 
     training_time_array = np.zeros([len(hidden_layer_sizes)])
     testing_time_array = np.zeros([len(hidden_layer_sizes)])
@@ -109,9 +114,11 @@ def test_normal_matrix(onlytest=False):
                      'normal_testing_accuracy.csv'), sep=';')
 
 
-def test_cnn_matrix(onlytest=False):
-    linear_layer_sizes = [8, 16, 32, 64, 128, 256]
-    convolutional_layer_sizes = [8, 16, 32]
+def test_cnn_matrix(onlytest=False, hidden_layer_sizes=None, k_list=None):
+    if hidden_layer_sizes is None:
+        linear_layer_sizes = [8, 16, 32, 64, 128, 256]
+    if k_list is None:
+        convolutional_layer_sizes = [8, 16, 32]
 
     training_time_array = np.zeros([len(linear_layer_sizes), len(convolutional_layer_sizes)])
     testing_time_array = np.zeros([len(linear_layer_sizes), len(convolutional_layer_sizes)])
