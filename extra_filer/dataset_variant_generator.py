@@ -133,9 +133,6 @@ def svd_libraries_main(k, dataset_name='MNIST'):
                         save_folder='Generated dataset variants', dataset_name=dataset_name)
 
 
-
-
-
 if __name__ == '__main__':
     # pca_library_main(10)
     # svd_libraries_main(10)
