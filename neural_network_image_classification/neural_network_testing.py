@@ -1,9 +1,9 @@
-import neural_network_training
 import numpy as np
 import pandas as pd
 import extra_filer.extra_tools as tools
 import os
 import matplotlib.pyplot as plt
+import neural_network_image_classification.neural_network_training as neural_network_training
 
 import os
 
@@ -33,6 +33,10 @@ def test_score_matrix(onlytest=False, hidden_layer_sizes=None, k_list=None):
                 training_time_array[i, j] = training_time
             testing_time_array[i, j] = testing_time
             testing_accuracy_array[i, j] = testing_accuracy
+
+    save_path = os.path.join(tools.get_project_root(), 'neural_network_image_classification', 'results')
+    if not os.path.exists(save_path):
+        os.makedirs(save_path)
 
     if not onlytest:
         pd.DataFrame(training_time_array, columns=k_list, index=np.array(hidden_layer_sizes)).to_csv(
@@ -70,16 +74,18 @@ def test_u_v_matrix(u_v, onlytest=False, hidden_layer_sizes=None, k_list=None):
             testing_time_array[i, j] = testing_time
             testing_accuracy_array[i, j] = testing_accuracy
 
+    save_path = os.path.join(tools.get_project_root(), 'neural_network_image_classification', 'results')
+    if not os.path.exists(save_path):
+        os.makedirs(save_path)
+
     if not onlytest:
-        pd.DataFrame(training_time_array, columns=k_list, index=np.array(hidden_layer_sizes)).to_csv(
-            os.path.join(tools.get_project_root(), 'neural_network_image_classification', 'results',
-                         f'{u_v.lower()}_training_time.csv'), sep=';')
-    pd.DataFrame(testing_time_array, columns=k_list, index=np.array(hidden_layer_sizes)).to_csv(
-        os.path.join(tools.get_project_root(), 'neural_network_image_classification', 'results',
-                     f'{u_v.lower()}_testing_time.csv'), sep=';')
-    pd.DataFrame(testing_accuracy_array, columns=k_list, index=np.array(hidden_layer_sizes)).to_csv(
-        os.path.join(tools.get_project_root(), 'neural_network_image_classification', 'results',
-                     f'{u_v.lower()}_testing_accuracy.csv'), sep=';')
+        pd.DataFrame(training_time_array, index=np.array(hidden_layer_sizes)).to_csv(
+            os.path.join(save_path, f'{u_v.lower()}_training_time.csv'), sep=';')
+    pd.DataFrame(testing_time_array, index=np.array(hidden_layer_sizes)).to_csv(
+        os.path.join(save_path, f'{u_v.lower()}_testing_time.csv'), sep=';')
+    pd.DataFrame(testing_accuracy_array, index=np.array(hidden_layer_sizes)).to_csv(
+        os.path.join(save_path, f'{u_v.lower()}_testing_accuracy.csv'), sep=';')
+
 
 
 def test_normal_matrix(onlytest=False, hidden_layer_sizes=None):
@@ -102,22 +108,23 @@ def test_normal_matrix(onlytest=False, hidden_layer_sizes=None):
         testing_time_array[i] = testing_time
         testing_accuracy_array[i] = testing_accuracy
 
+    save_path = os.path.join(tools.get_project_root(), 'neural_network_image_classification', 'results')
+    if not os.path.exists(save_path):
+        os.makedirs(save_path)
+
     if not onlytest:
         pd.DataFrame(training_time_array, index=np.array(hidden_layer_sizes)).to_csv(
-            os.path.join(tools.get_project_root(), 'neural_network_image_classification', 'results',
-                         'normal_training_time.csv'), sep=';')
+            os.path.join(save_path, 'normal_training_time.csv'), sep=';')
     pd.DataFrame(testing_time_array, index=np.array(hidden_layer_sizes)).to_csv(
-        os.path.join(tools.get_project_root(), 'neural_network_image_classification', 'results',
-                     'normal_testing_time.csv'), sep=';')
+        os.path.join(save_path, 'normal_testing_time.csv'), sep=';')
     pd.DataFrame(testing_accuracy_array, index=np.array(hidden_layer_sizes)).to_csv(
-        os.path.join(tools.get_project_root(), 'neural_network_image_classification', 'results',
-                     'normal_testing_accuracy.csv'), sep=';')
+        os.path.join(save_path, 'normal_testing_accuracy.csv'), sep=';')
 
 
-def test_cnn_matrix(onlytest=False, hidden_layer_sizes=None, k_list=None):
-    if hidden_layer_sizes is None:
+def test_cnn_matrix(onlytest=False, linear_layer_sizes=None, convolutional_layer_sizes=None):
+    if linear_layer_sizes is None:
         linear_layer_sizes = [8, 16, 32, 64, 128, 256]
-    if k_list is None:
+    if convolutional_layer_sizes is None:
         convolutional_layer_sizes = [8, 16, 32]
 
     training_time_array = np.zeros([len(linear_layer_sizes), len(convolutional_layer_sizes)])
@@ -138,16 +145,18 @@ def test_cnn_matrix(onlytest=False, hidden_layer_sizes=None, k_list=None):
             testing_time_array[i, j] = testing_time
             testing_accuracy_array[i, j] = testing_accuracy
 
+
+    save_path = os.path.join(tools.get_project_root(), 'neural_network_image_classification', 'results')
+    if not os.path.exists(save_path):
+        os.makedirs(save_path)
+
     if not onlytest:
         pd.DataFrame(training_time_array, columns=convolutional_layer_sizes, index=np.array(linear_layer_sizes)).to_csv(
-            os.path.join(tools.get_project_root(), 'neural_network_image_classification', 'results',
-                         'cnn_training_time.csv'), sep=';')
+            os.path.join(save_path, 'cnn_training_time.csv'), sep=';')
     pd.DataFrame(testing_time_array, columns=convolutional_layer_sizes, index=np.array(linear_layer_sizes)).to_csv(
-        os.path.join(tools.get_project_root(), 'neural_network_image_classification', 'results',
-                     'cnn_testing_time.csv'), sep=';')
+        os.path.join(save_path, 'cnn_testing_time.csv'), sep=';')
     pd.DataFrame(testing_accuracy_array, columns=convolutional_layer_sizes, index=np.array(linear_layer_sizes)).to_csv(
-        os.path.join(tools.get_project_root(), 'neural_network_image_classification', 'results',
-                     'cnn_testing_accuracy.csv'), sep=';')
+        os.path.join(save_path, 'cnn_testing_accuracy.csv'), sep=';')
 
 
 def plot_result_matrix(test_name='score'):
@@ -163,7 +172,7 @@ def plot_result_matrix(test_name='score'):
     training_time = pd.read_csv(os.path.join(tools.get_project_root(), 'neural_network_image_classification', 'results',
                                              f'{test_name}_training_time.csv'), sep=';', index_col=0)
 
-    # We don't need to plot all of the rows/ different layer sizes
+    # We don't need to plot all the rows/ different layer sizes
     selected_layer_sizes = [16, 32, 128, 256]
     selected_layer_sizes = [16, 64, 256]
     testing_accuracy = testing_accuracy.loc[selected_layer_sizes]
@@ -191,7 +200,7 @@ def plot_result_matrix(test_name='score'):
         line = line.values[1:]
         axs[1].plot(x, line, linestyle=line_styles[idx], marker=marker_styles[idx])
     axs[1].set_ylabel('tid (s)')
-    axs[1].set_ylim([8, 12.5])
+    # axs[1].set_ylim([8, 12.5])
     axs[1].set_title('Träningstid för olika lagerstorlekar och k')
 
     # Plotting the testing time
@@ -201,7 +210,7 @@ def plot_result_matrix(test_name='score'):
         line = line.values[1:]
         axs[2].plot(x, line, linestyle=line_styles[idx], marker=marker_styles[idx])
     axs[2].set_ylabel('tid (µs)')
-    axs[2].set_ylim([7, 12])
+    # axs[2].set_ylim([7, 12])
     axs[2].set_title('Testtid för olika lagerstorlekar och k')
 
     for ax in axs:
@@ -241,14 +250,14 @@ def plot_normal_result():
     # Plotting the training time
     axs[1].plot(x, training_time.T.iloc[0], '-o')
     axs[1].set_ylabel('tid (s)')
-    axs[1].set_ylim([0, 20])
+    # axs[1].set_ylim([0, 20])
     axs[1].set_title('Träningstid för olika lagerstorlekar')
 
     # Plotting the testing time
     testing_time = testing_time * 10 ** 6
     axs[2].plot(x, testing_time.T.iloc[0], '-o')
     axs[2].set_ylabel('tid (µs)')
-    axs[2].set_ylim([0, 20])
+    # axs[2].set_ylim([0, 20])
     axs[2].set_title('Testtid för olika lagerstorlekar')
 
     for ax in axs:
@@ -299,7 +308,7 @@ def plot_cnn_result():
         axs[1].plot(x, line, linestyle=line_styles[idx], marker=marker_styles[idx], label=labels[idx])
     # axs[1].plot(x, training_time.T.iloc[0], '-o')
     axs[1].set_ylabel('tid (s)')
-    axs[1].set_ylim([11, 15])
+    # axs[1].set_ylim([11, 15])
     axs[1].set_title('Träningstid för olika lagerstorlekar')
 
     # Plotting the testing time
@@ -310,7 +319,7 @@ def plot_cnn_result():
         axs[2].plot(x, line, linestyle=line_styles[idx], marker=marker_styles[idx], label=labels[idx])
     # axs[2].plot(x, testing_time.T.iloc[0], '-o')
     axs[2].set_ylabel('tid (µs)')
-    axs[2].set_ylim([9, 13])
+    # axs[2].set_ylim([9, 13])
     axs[2].set_title('Testtid för olika lagerstorlekar')
 
     for ax in axs:
@@ -425,8 +434,9 @@ if __name__ == '__main__':
     # test_u_v_matrix('U')
     # test_normal_matrix()
     # test_cnn_matrix(onlytest=False)
-    plot_result_matrix('score')
+    # plot_result_matrix('score')
     # plot_result_matrix('U')
     # plot_result_matrix('V')
     # plot_normal_result()
     # plot_cnn_result()
+    pass

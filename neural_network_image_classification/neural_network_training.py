@@ -9,13 +9,14 @@ from torchvision import transforms
 from torch.utils.data import DataLoader, Dataset
 import numpy as np
 # import extra_filer.extra_tools as tools
-from neural_network_models import *
+from neural_network_image_classification.neural_network_models import *
 import extra_filer.extra_tools as tools
 from neural_network_image_classification.neural_network_models import *
 import matplotlib.pyplot as plt
 import time
 import pandas as pd
 import torch.nn.functional as F
+
 
 timelog = tools.EasyTimeLog()
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -237,8 +238,9 @@ def train_module(model: nn.modules, train_data: DataLoader, name: str, epochs: i
 
     # Saves the model (assume you are in the big folder)
     path = os.path.join(tools.get_project_root(), 'neural_network_image_classification', 'saved_models', name + '.pth')
+    if not os.path.exists(os.path.dirname(path)):
+        os.makedirs(os.path.dirname(path))
     torch.save(model.state_dict(), path)
-
     return train_time  # the model don't need to be returned, it's already updated
 
 
