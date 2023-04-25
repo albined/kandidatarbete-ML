@@ -1,5 +1,4 @@
-import cupy as np
-import numpy as og_np
+import numpy as np
 from abc import ABC, abstractmethod
 import extra_filer.extra_tools as tools
 from sklearn.decomposition import PCA
@@ -251,15 +250,15 @@ def test_pca(save=True):
 
     if save:
         pd.DataFrame(
-            accuracies_list, columns=k_list, index=og_np.array(training_set_sizes)).to_csv(
+            accuracies_list, columns=k_list, index=np.array(training_set_sizes)).to_csv(
             os.path.join(tools.get_project_root(), 'pca_image_classification', 'results', '2accuracy.csv'), sep=';')
 
         pd.DataFrame(
-            training_times_list, columns=k_list, index=og_np.array(training_set_sizes)).to_csv(
+            training_times_list, columns=k_list, index=np.array(training_set_sizes)).to_csv(
             os.path.join(tools.get_project_root(), 'pca_image_classification', 'results', '2training_time.csv'), sep=';')
 
         pd.DataFrame(
-            testing_times_list, columns=k_list, index=og_np.array(training_set_sizes)).to_csv(
+            testing_times_list, columns=k_list, index=np.array(training_set_sizes)).to_csv(
             os.path.join(tools.get_project_root(), 'pca_image_classification', 'results', '2testing_time.csv'), sep=';')
 
 

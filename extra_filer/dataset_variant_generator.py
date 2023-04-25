@@ -1,5 +1,4 @@
 from collections import defaultdict
-
 from scipy.spatial.distance import cdist
 
 from extra_filer.extra_tools import append_matrix_to_csv, load_mnist, EasyTimeLog

@@ -3,8 +3,7 @@ import glob
 import os
 from collections import defaultdict
 
-import cupy as np
-import numpy as og_np
+import numpy as np
 import pandas as pd
 from warnings import warn
 # from cupyx.scipy.spatial.distance import cdist
@@ -288,10 +287,10 @@ def reduce_pca_dataset(dtrain, train_labels, threshold_mult=0.5, dtype='float32'
         dnum = dtrain[(train_labels == n).reshape([-1])]
         # Compute the average distance for the first 10 occurences of each number since
         # that should be close enough
-        average_distance = sum([og_np.sum(og_np.square(dnum - dnum[i]), axis=1).mean() for i in range(10)]) / 10
+        average_distance = sum([np.sum(np.square(dnum - dnum[i]), axis=1).mean() for i in range(10)]) / 10
         threshold = average_distance * (threshold_mult**2)
-        distances = og_np.array(cdist(dnum, dnum, metric='sqeuclidean'))
-        pairs = og_np.argwhere(distances < threshold)
+        distances = np.array(cdist(dnum, dnum, metric='sqeuclidean'))
+        pairs = np.argwhere(distances < threshold)
         pairs = [(i, j) for (i, j) in pairs if i < j]  # remove duplicates and self-matches
         pair_dict = defaultdict(set)
         used_set = set()

@@ -1,7 +1,6 @@
 import os.path
 import warnings
 
-import cupy
 import torch
 import torch.nn as nn
 import torch.optim as optim
