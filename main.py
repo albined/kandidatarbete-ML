@@ -1,7 +1,7 @@
 import os
 import sys
+import time
 import warnings
-
 from PyQt5.QtGui import QIntValidator
 from PyQt5.QtCore import QThread, pyqtSignal
 from PyQt5.QtWidgets import QApplication, QWidget, QCheckBox, QLabel, QLineEdit, QVBoxLayout, QHBoxLayout, QPushButton, \
@@ -11,7 +11,8 @@ from PyQt5 import QtCore
 import extra_filer.extra_tools as tools
 import svd_image_compression.image_compression as svd_imagecompression
 import neural_network_image_classification.neural_network_testing as nn_testing
-import threading
+import pca_image_classification.new_clean_image_classification as pca_classification
+import pca_image_classification.new_clean_plotter as pca_plotter
 
 
 class MainWindow(QWidget):
@@ -60,11 +61,13 @@ class MainWindow(QWidget):
         self.pca_label = QLabel("PCA image classification")
         self.pca_label.setStyleSheet("font-size: 20px; font-weight: bold; margin-bottom: 10px;")
 
-        self.pca_input1_label = QLabel("Input 1:")
+        self.pca_input1_label = QLabel("Training set size. Use -1, -2 and -3 for reduced sets 0.5, 0.75 and 1")
         self.pca_input1 = QLineEdit()
-        self.pca_input2_label = QLabel("Input 2:")
+        self.pca_input1.setText("1000, 5000, 10000, 30000, 60000")
+        self.pca_input2_label = QLabel("score matrix size (k)")
         self.pca_input2 = QLineEdit()
-        self.pca_button = QPushButton("Run")
+        self.pca_input2.setText("2, 8, 32, 128, 512")
+        self.pca_button = QPushButton("Test")
         self.pca_button.clicked.connect(self.run_pca)
 
         self.pca_layout = QVBoxLayout()
@@ -176,14 +179,26 @@ class MainWindow(QWidget):
 
         # thread = threading.Thread(target=train_test_func)
         # thread.start()
-        worker = NNWorker(train_test_func)
-        worker.finished.connect(plot_func)
-        worker.run()
+        self.worker_nn = NormalWorker(train_test_func)
+        self.worker_nn.finished.connect(plot_func)
+        self.worker_nn.finished.connect(self.worker_nn.deleteLater)
+        self.worker_nn.start()
 
     def run_pca(self):
         input1 = self.pca_input1.text()
         input2 = self.pca_input2.text()
-        # call the function that handles the PCA image classification
+        input1 = self.check_input(input1, 60001)
+        input2 = self.check_input(input2, 784)
+        if input1 is None or input2 is None:
+            return
+        classify = lambda: pca_classification.test_pca(training_set_sizes=input1, k_list=input2)
+        plot_results = lambda: pca_plotter.plot_results()
+
+        self.worker_pca = NormalWorker(classify)
+        self.worker_pca.finished.connect(plot_results)
+        self.worker_pca.finished.connect(self.worker_pca.deleteLater)
+        self.worker_pca.start()
+
 
 
     def import_image(self, state, file_name=None):
@@ -204,9 +219,10 @@ class MainWindow(QWidget):
             warnings.warn('Input field can\'t be empty')
             return
         k = int(k)
-        worker = SVDWorker(svd_imagecompression.compress_image, input_path, k)
-        worker.finished.connect(self.update_result_image)
-        worker.run()
+        self.worker_svd = SVDWorker(svd_imagecompression.compress_image, input_path, k)
+        self.worker_svd.finished.connect(self.update_result_image)
+        self.worker_svd.finished.connect(self.worker_svd.deleteLater)
+        self.worker_svd.start()
         # call the function that handles the SVD image compression
 
 
@@ -296,7 +312,7 @@ class SVDWorker(QThread):
         result = self.func(*self.args, **self.kwargs)
         self.finished.emit(result)
 
-class NNWorker(QThread):
+class NormalWorker(QThread):
     finished = pyqtSignal()
 
     def __init__(self, func, *args, **kwargs):

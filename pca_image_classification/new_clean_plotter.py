@@ -15,11 +15,11 @@ def plot_results():
     training_time = pd.read_csv(os.path.join(tools.get_project_root(), 'pca_image_classification', 'results', f'training_time.csv'), sep=';', index_col=0)
 
     # If we want to filter what lines
-    selected_layer_sizes = [-1, -2, -3]
+    # selected_layer_sizes = [-1, -2, -3]
     # selected_layer_sizes = [10000, 30000, 60000]
-    testing_accuracy = testing_accuracy.loc[selected_layer_sizes]
-    testing_time = testing_time.loc[selected_layer_sizes]
-    training_time = training_time.loc[selected_layer_sizes]
+    # testing_accuracy = testing_accuracy.loc[selected_layer_sizes]
+    # testing_time = testing_time.loc[selected_layer_sizes]
+    # training_time = training_time.loc[selected_layer_sizes]
 
     fig, axs = plt.subplots(1, 3, figsize=(12, 4))
 
@@ -39,7 +39,7 @@ def plot_results():
         line = line.values[1:]
         axs[0].plot(x, line, linestyle=line_styles[idx], marker=marker_styles[idx])
     axs[0].set_ylabel('Precision')
-    axs[0].set_ylim([0.85, 1])
+    # axs[0].set_ylim([0.5, 1])
     axs[0].set_title('Precision för olika stora träningsset och k')
 
     # Plotting the training time

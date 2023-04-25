@@ -212,10 +212,13 @@ def test_so_that_all_pca_methods_give_the_same_resutl():
     # This does not always compute true since the sign of the eigenvectors are arbitrary
 
 
-def test_pca(save=True):
+def test_pca(save=True, training_set_sizes=None, k_list=None):
     # training_set_sizes = [-1, -2, -3, 1000, 5000, 10000, 30000, 60000]
-    training_set_sizes = [999, 1000, 1001, 5000, 10000]
-    k_list = [1, 2, 3, 5, 8, 14, 20, 28, 64, 128]
+    if training_set_sizes is None:
+        training_set_sizes = [999, 1000, 1001, 5000, 10000]
+    if k_list is None:
+        k_list = [1, 2, 3, 5, 8, 14, 20, 28, 64, 128]
+
     accuracies_list = []
     training_times_list = []
     testing_times_list = []
@@ -249,17 +252,21 @@ def test_pca(save=True):
         testing_times_list.append(test_time)
 
     if save:
+        save_dir = os.path.join(tools.get_project_root(), 'pca_image_classification', 'results')
+        if not os.path.exists(save_dir):
+            os.makedirs(save_dir)
+
         pd.DataFrame(
             accuracies_list, columns=k_list, index=np.array(training_set_sizes)).to_csv(
-            os.path.join(tools.get_project_root(), 'pca_image_classification', 'results', '2accuracy.csv'), sep=';')
+                os.path.join(save_dir, 'accuracy.csv'), sep=';')
 
         pd.DataFrame(
             training_times_list, columns=k_list, index=np.array(training_set_sizes)).to_csv(
-            os.path.join(tools.get_project_root(), 'pca_image_classification', 'results', '2training_time.csv'), sep=';')
+                os.path.join(save_dir, 'training_time.csv'), sep=';')
 
         pd.DataFrame(
             testing_times_list, columns=k_list, index=np.array(training_set_sizes)).to_csv(
-            os.path.join(tools.get_project_root(), 'pca_image_classification', 'results', '2testing_time.csv'), sep=';')
+                os.path.join(save_dir, 'testing_time.csv'), sep=';')
 
 
 if __name__ == '__main__':
