@@ -1,0 +1,12 @@
+/data/
+/isic/
+/neural_network_image_classification/old_files/
+/neural_network_image_classification/results/
+/neural_network_image_classification/saved_models/
+/pca_image_classification/results/
+/pca_image_classification/saved_files/
+/MNIST/
+/Generated dataset variants/
+/svd_image_compression/compressed_images/
+/extra_filer/tidslog.txt
+/neural_network_image_classification/data/

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="PYTHON_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/isic/images" />
+      <excludeFolder url="file://$MODULE_DIR$/Generated dataset variants/svd_transformed_MNIST_k=10" />
+      <excludeFolder url="file://$MODULE_DIR$/Generated dataset variants/pca_transformed_MNIST_k=1" />
+      <excludeFolder url="file://$MODULE_DIR$/Generated dataset variants/pca_transformed_MNIST_k=2" />
+      <excludeFolder url="file://$MODULE_DIR$/Generated dataset variants/pca_transformed_MNIST_k=3" />
+      <excludeFolder url="file://$MODULE_DIR$/Generated dataset variants/pca_transformed_MNIST_k=5" />
+      <excludeFolder url="file://$MODULE_DIR$/Generated dataset variants/pca_transformed_MNIST_k=8" />
+      <excludeFolder url="file://$MODULE_DIR$/Generated dataset variants/pca_transformed_MNIST_k=14" />
+      <excludeFolder url="file://$MODULE_DIR$/Generated dataset variants/pca_transformed_MNIST_k=20" />
+      <excludeFolder url="file://$MODULE_DIR$/Generated dataset variants/pca_transformed_MNIST_k=28" />
+      <excludeFolder url="file://$MODULE_DIR$/Generated dataset variants/pca_transformed_MNIST_k=64" />
+      <excludeFolder url="file://$MODULE_DIR$/Generated dataset variants/pca_transformed_MNIST_k=128" />
+      <excludeFolder url="file://$MODULE_DIR$/Generated dataset variants/U_svd_transformed_MNIST_k=1" />
+      <excludeFolder url="file://$MODULE_DIR$/Generated dataset variants/U_svd_transformed_MNIST_k=2" />
+      <excludeFolder url="file://$MODULE_DIR$/Generated dataset variants/U_svd_transformed_MNIST_k=3" />
+      <excludeFolder url="file://$MODULE_DIR$/Generated dataset variants/U_svd_transformed_MNIST_k=5" />
+      <excludeFolder url="file://$MODULE_DIR$/Generated dataset variants/U_svd_transformed_MNIST_k=8" />
+      <excludeFolder url="file://$MODULE_DIR$/Generated dataset variants/U_svd_transformed_MNIST_k=14" />
+      <excludeFolder url="file://$MODULE_DIR$/Generated dataset variants/U_svd_transformed_MNIST_k=20" />
+      <excludeFolder url="file://$MODULE_DIR$/Generated dataset variants/U_svd_transformed_MNIST_k=28" />
+      <excludeFolder url="file://$MODULE_DIR$/Generated dataset variants/V_svd_transformed_MNIST_k=1" />
+      <excludeFolder url="file://$MODULE_DIR$/Generated dataset variants/V_svd_transformed_MNIST_k=2" />
+      <excludeFolder url="file://$MODULE_DIR$/Generated dataset variants/V_svd_transformed_MNIST_k=3" />
+      <excludeFolder url="file://$MODULE_DIR$/Generated dataset variants/V_svd_transformed_MNIST_k=5" />
+      <excludeFolder url="file://$MODULE_DIR$/Generated dataset variants/V_svd_transformed_MNIST_k=8" />
+      <excludeFolder url="file://$MODULE_DIR$/Generated dataset variants/V_svd_transformed_MNIST_k=14" />
+      <excludeFolder url="file://$MODULE_DIR$/Generated dataset variants/V_svd_transformed_MNIST_k=20" />
+      <excludeFolder url="file://$MODULE_DIR$/Generated dataset variants/V_svd_transformed_MNIST_k=28" />
+    </content>
+    <orderEntry type="jdk" jdkName="kandidatarbete-2023" jdkType="Python SDK" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>
