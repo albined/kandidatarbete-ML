@@ -7,7 +7,7 @@ import extra_filer.extra_tools as tools
 
 os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 
-def read_image(path='donkey_kong.jpg'):
+def read_image(path='zelda.png'):
     img = Image.open(path)
     img_array = np.array(img)
     return img_array
