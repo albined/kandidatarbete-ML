@@ -34,7 +34,7 @@ complete. Tables with the results can also be found in `/pca_image_classificatio
   - The output will be shown in the second image box once it's been computed
 
 
-<img src="https://raw.githubusercontent.com/albined/kandidatarbete-ML/master/%C3%B6vrigt/demo.png?token=GHSAT0AAAAAACB23E33EDWFPV3GNFFHKRLCZCIFBTA" alt="demo">
+<img src="https://github.com/albined/kandidatarbete-ML/tree/master/%C3%B6vrigt/demo.png?raw=true" alt="demo image">
 
 
 ## Authors and acknowledgment
