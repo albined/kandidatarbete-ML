@@ -247,7 +247,7 @@ class MainWindow(QWidget):
         ]
         input2_titles = [
             "Leave this empty",
-            "Convolutional layer sizes (x, x/2)",
+            "Convolutional layer sizes (x, x*2)",
             "k (x)",
             "k (x)",
             "k (x)"
