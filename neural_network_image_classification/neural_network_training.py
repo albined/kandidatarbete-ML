@@ -1,6 +1,5 @@
 import os.path
 import warnings
-
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -228,7 +227,6 @@ def train_module(model: nn.modules, train_data: DataLoader, name: str, epochs: i
             y = torch.flatten(y)
             optimizer.zero_grad(set_to_none=True)  # resets the gradients before countinue to the next batch
             prediction = model(x)  # predict and makes the forward
-            # luss = loss(prediction, y)  # Calculate the loss using Crossentropy
             luss = F.nll_loss(prediction, y)
             luss.backward()  # compute the gradients
             optimizer.step()  # updates the weights
@@ -448,63 +446,6 @@ def test_LeNet5(train_data, test_data, epochs=10):
     pre_rate, pre_time = test_model(model=LeNet5, test_data=test_data)
 
     return pre_rate, train_time, pre_time
-
-
-if __name__ == '__main__':
-    train, test = get_MNIST()  # .data = images     .targets = labels
-    # transform to special class called DataLoader,which pytorch are traing models with.
-    data_train = DataLoader(train, batch_size=64, shuffle=True)
-    data_test = DataLoader(test, batch_size=64, shuffle=True)
-
-    # NOTE (for linear_module())
-    # Epoch = 10, took 504.79717659950256 seconds to train, 0.9346 % predicting rate
-    # Epoch = 15, took 708.9179368019104 seconds to train, 0.8564 % predicting rate  -> OVERFITTING
-
-    # NOTE (for conv_module())
-    # Epoch = 5, took 718.831481218338 seconds to train, 0.9644 % predicting rate
-
-    # NOTE (for conv_module_general())
-    # Epoch = 5, k = 6,  took 136.98681330680847 seconds to train, 0.098% or 0.8736% predicting rate
-    # Epoch = 10, k = 6,  took 299.85329127311707 seconds to train, 0.8983 % predicting rate
-
-    # NOTE: Testing the code (only for myself)
-    """ Data processing of pcamatrix"""
-    # k = 6
-    # T_k_train = score_matrix(train.data,k)
-    # T_k_test = score_matrix(test.data,k)
-    # train_shape = T_k_train.shape[1:] # Calculate the input shape of matrix to NN
-    # Addning a chanel size so it will be at same format as original data. (not nicly done)
-    # T_k_train = T_k_train.unsqueeze(1)
-    # T_k_test = T_k_test.unsqueeze(1)
-    # Makes a class inheritate from SimpleDataset which contains the prossessed data and it's labels
-    # T_k_train = SimpleDataset(T_k_train, train.targets)
-    # T_k_test = SimpleDataset(T_k_test, test.targets)
-    # Makes the Dataloader
-    # data_train = DataLoader(T_k_train, batch_size=64, shuffle=True)
-    # data_test = DataLoader(T_k_test, batch_size=64, shuffle=True)
-
-    """ If you want to try to train a model"""
-    # model = linear_module_general()
-    # model_name = 'linear_model'
-    # train_time = train_module(model=model, train_data=data_train, name=model_name, epochs=10)
-    # pre_rate, _ = test_model(model=model, test_data=data_test)
-    # print('prediction rate: ',pre_rate)
-    # print('training time',train_time)
-
-    """ If you want to load a model"""
-    # load_model(cnn,cnn_name)
-    # pre_rate, _ = test_model(cnn, data_test)
-    # print('prediction rate: ',pre_rate)
-
-    """ Calculate Svd_k and score matrix"""
-    # k = 17
-    # U_k, Z_k, V_k,svd_k= truncated_svd(train.data[1], k, SVD_k=True)
-    # print(Z_k)
-    # T_k = pca_matrix(train.data,k)
-    # train_shape = T_k.shape[1:]
-
-
-
 
 
 
