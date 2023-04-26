@@ -307,7 +307,15 @@ def result_table(dim_to_keep, time_dict, pred_rate, n_test, n_train, show=True, 
 
 if __name__ == '__main__':
 
-
+    """
+    test_images, labels = load_mnist(False, 20, normalize=False, keep_square=True)
+    save_path = "C:\\Users\\albin\\Desktop\\MNIST rendered"
+    for idx, image in enumerate(test_images):
+        plt.imshow(image)
+        plt.axis('off')
+        plt.savefig(os.path.join(save_path, f'image_{idx}.jpg'), bbox_inches='tight', pad_inches=0)
+    print(labels)
+    """
 
     # N_dim_to_keep = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 784]
     # N_dim_to_keep = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 20, 25, 30, 40, 50, 70, 90, 150, 300, 784]
@@ -337,15 +345,3 @@ if __name__ == '__main__':
     # plot_singular_values(S, n_train_imgs, show=show_plots, save=save_plots)
     # plot_prediction_per_time(pred_rate, time_dict, n_train_imgs, show=show_plots, save=save_plots)
     # result_table(N_dim_to_keep, time_dict, pred_rate, n_test_imgs, n_train_imgs, show=show_plots, save=save_plots)
-
-
-
-
-
-
-
-
-
-
-
-
