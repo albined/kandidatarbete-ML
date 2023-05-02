@@ -9,11 +9,11 @@ Clone the project and install the requirements to your environment:
 
 `pip install -r requirements.txt`
 
-Then run **[main.py]** to start the program.
+Then run **[main.py](main.py)** to start the program.
 
 ## Usage
 
-Run the file **[main.py]** to start the program. 
+Run the file **[main.py](main.py)** to start the program. 
 
 ### Neural network image classification
 - Select the test you want to perform in the checkbox
@@ -47,4 +47,4 @@ to our professor and teacher Larisa Beilina for her guidance and support
 throughout the project. 
 
 ## License
-This project is licensed under the MIT License. See [LICENSE.txt] for details. 
+This project is licensed under the MIT License. See [LICENSE.txt](LICENSE.txt) for details. 
