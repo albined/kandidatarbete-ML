@@ -3,9 +3,9 @@ import sys
 import time
 import warnings
 from PyQt5.QtGui import QIntValidator
-from PyQt5.QtCore import QThread, pyqtSignal
+from PyQt5.QtCore import QThread, pyqtSignal, Qt, QSize
 from PyQt5.QtWidgets import QApplication, QWidget, QCheckBox, QLabel, QLineEdit, QVBoxLayout, QHBoxLayout, QPushButton, \
-    QFileDialog, QGridLayout, QSpacerItem, QSizePolicy, QMessageBox
+    QFileDialog, QGridLayout, QSpacerItem, QSizePolicy, QMessageBox, QScrollArea, QMainWindow
 from PyQt5.QtGui import QPixmap
 from PyQt5 import QtCore
 import extra_filer.extra_tools as tools
@@ -15,7 +15,7 @@ import pca_image_classification.new_clean_image_classification as pca_classifica
 import pca_image_classification.new_clean_plotter as pca_plotter
 
 
-class MainWindow(QWidget):
+class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
@@ -116,7 +116,21 @@ class MainWindow(QWidget):
         self.layout.addLayout(self.pca_layout)
         self.layout.addLayout(self.svd_layout)
 
-        self.setLayout(self.layout)
+        self.scroll = QScrollArea()
+        self.widget = QWidget()
+        self.widget.setLayout(self.layout)
+        self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.scroll.setWidgetResizable(False)
+        self.scroll.setWidget(self.widget)
+
+        self.setCentralWidget(self.scroll)
+        self.setGeometry(600, 100, 445, 820)
+        self.setWindowTitle('Demo')
+        self.show()
+
+
+        # self.setLayout(self.layout)
         self.import_image(False, os.path.join(tools.get_project_root(), 'svd_image_compression', 'zelda.png'))
 
         self.show()
