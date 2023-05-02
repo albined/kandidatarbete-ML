@@ -9,9 +9,11 @@ Clone the project and install the requirements to your environment:
 
 `pip install -r requirements.txt`
 
-Then run **main.py** to start the program
+Then run **[main.py]** to start the program.
 
 ## Usage
+
+Run the file **[main.py]** to start the program. 
 
 ### Neural network image classification
 - Select the test you want to perform in the checkbox
@@ -38,15 +40,11 @@ complete. Tables with the results can also be found in `/pca_image_classificatio
 
 
 ## Authors and acknowledgment
-Albin 
-
-Bekir 
-
-Joel
-
-Enya
-
-Hannes
+This Git repository was created by Albin Edegran, Bekir Fazlija, Joel Carlsson,
+Enya Arvidsson and Hannes Björck as part of our kandidatarbete at Chalmers.
+We would like to express our gratitude 
+to our professor and teacher Larisa Beilina for her guidance and support
+throughout the project. 
 
 ## License
-This project is licensed under the MIT License
+This project is licensed under the MIT License. See [LICENSE.txt] for details. 
