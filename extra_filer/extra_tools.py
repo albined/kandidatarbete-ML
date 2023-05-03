@@ -2,11 +2,8 @@ import datetime
 import glob
 import os
 from collections import defaultdict
-
 import numpy as np
 import pandas as pd
-from warnings import warn
-# from cupyx.scipy.spatial.distance import cdist
 from scipy.spatial.distance import cdist
 from torchvision import datasets
 import time

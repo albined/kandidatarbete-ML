@@ -3,8 +3,6 @@ import os
 import extra_filer.extra_tools as tools
 import matplotlib.pyplot as plt
 
-os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
-
 def plot_results():
     line_styles = ['-', '--', '-.', ':', '',
               '--', (0, (1, 1)), (0, (3, 1, 1, 1)), (0, (5, 1))]

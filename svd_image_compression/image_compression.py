@@ -1,27 +1,13 @@
 import os
-
 from PIL import Image
 import numpy as np
-import pandas as pd
 import extra_filer.extra_tools as tools
-
-os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 
 def read_image(path='zelda.png'):
     img = Image.open(path)
     img_array = np.array(img)
     return img_array
 
-
-def calculate_error_from_image_matrix_difference(original, compressed):
-    error_matrix = original - compressed
-    error = np.linalg.norm(error_matrix)
-    return error
-
-
-def calculate_error_from_remaining_singular_values(S, k):
-    error = np.linalg.norm(S[k:])
-    return error
 
 def compress_image(path, k):
     original_image = read_image(path)
