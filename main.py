@@ -201,7 +201,7 @@ class MainWindow(QMainWindow):
     def run_pca(self):
         input1 = self.pca_input1.text()
         input2 = self.pca_input2.text()
-        input1 = self.check_input(input1, 60001)
+        input1 = self.check_input(input1, 60001, lower_bound=-3)
         input2 = self.check_input(input2, 784)
         if input1 is None or input2 is None:
             return
@@ -286,8 +286,7 @@ class MainWindow(QMainWindow):
         self.nn_input1.setText(input1_defaults[n])
         self.nn_input2.setText(input2_defaults[n])
 
-
-    def check_input(self, input: str, upper_bound: int):
+    def check_input(self, input: str, upper_bound: int, lower_bound=0):
         # Split the input string into a list of strings
         input_list = input.split(',')
 
@@ -300,7 +299,7 @@ class MainWindow(QMainWindow):
 
         # Check that all the integers are between 0 and upper_bound
         for x in input_list:
-            if x <= 0 or x >= upper_bound:
+            if x <= lower_bound or x >= upper_bound:
                 print("Invalid input: integer out of range")
                 return None
 

@@ -256,11 +256,12 @@ def reduce_pca_dataset(dtrain, train_labels, threshold_mult=0.5, dtype='float32'
     threshold_mult: If the distance between two images is smaller than distance_mult*average_distance then they will be
                     combined
     """
-    dtrain=dtrain.get()
-    train_labels = train_labels.get()
+    # dtrain=dtrain.get()
+    # train_labels = train_labels.get()
     dtrain_reduced = []
     dlabels_reduced = []
     for n in range(10):
+        print(f'Reducing: {n}/9')
         dnum_new = []
         dnum = dtrain[(train_labels == n).reshape([-1])]
         # Compute the average distance for the first 10 occurences of each number since
