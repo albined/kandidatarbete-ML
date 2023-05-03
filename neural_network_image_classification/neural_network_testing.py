@@ -4,11 +4,7 @@ import extra_filer.extra_tools as tools
 import os
 import matplotlib.pyplot as plt
 import neural_network_image_classification.neural_network_training as neural_network_training
-
 import os
-
-os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
-
 
 def test_score_matrix(onlytest=False, hidden_layer_sizes=None, k_list=None):
     if hidden_layer_sizes is None:
@@ -173,11 +169,11 @@ def plot_result_matrix(test_name='score'):
                                              f'{test_name}_training_time.csv'), sep=';', index_col=0)
 
     # We don't need to plot all the rows/ different layer sizes
-    selected_layer_sizes = [16, 32, 128, 256]
-    selected_layer_sizes = [16, 64, 256]
-    testing_accuracy = testing_accuracy.loc[selected_layer_sizes]
-    testing_time = testing_time.loc[selected_layer_sizes]
-    training_time = training_time.loc[selected_layer_sizes]
+    # selected_layer_sizes = [16, 32, 128, 256]
+    # selected_layer_sizes = [16, 64, 256]
+    # testing_accuracy = testing_accuracy.loc[selected_layer_sizes]
+    # testing_time = testing_time.loc[selected_layer_sizes]
+    # training_time = training_time.loc[selected_layer_sizes]
 
     fig, axs = plt.subplots(1, 3, figsize=(12, 4))
 
@@ -191,7 +187,7 @@ def plot_result_matrix(test_name='score'):
         line = line.values[1:]
         axs[0].plot(x, line, linestyle=line_styles[idx], marker=marker_styles[idx])
     axs[0].set_ylabel('Precision')
-    axs[0].set_ylim([0.5, 1])
+    # axs[0].set_ylim([0.5, 1])
     axs[0].set_title('Precision för olika lagerstorlekar och k')
 
     # Plotting the training time
@@ -244,7 +240,7 @@ def plot_normal_result():
     # Plotting the accuracy
     axs[0].plot(x, testing_accuracy.T.iloc[0], '-o')
     axs[1].set_ylabel('precision')
-    axs[0].set_ylim([0.85, 1])
+    # axs[0].set_ylim([0.85, 1])
     axs[0].set_title('Precision för olika lagerstorlekar')
 
     # Plotting the training time
@@ -298,7 +294,7 @@ def plot_cnn_result():
         axs[0].plot(x, line, linestyle=line_styles[idx], marker=marker_styles[idx], label=labels[idx])
     # axs[0].plot(x, testing_accuracy.T.iloc[0], '-o')
     axs[1].set_ylabel('precision')
-    axs[0].set_ylim([0.94, 1])
+    # axs[0].set_ylim([0.94, 1])
     axs[0].set_title('Precision för olika lagerstorlekar')
 
     # Plotting the training time
@@ -336,7 +332,7 @@ def plot_cnn_result():
     plt.show()
 
 
-def test_pca_matrix():
+def test_joel_pca_matrix():
     """ A funtion thats trains and tests the models
         -> it is testing diffrent models depending on the parameters
         -> Saves the results in csv files
@@ -349,29 +345,30 @@ def test_pca_matrix():
     testing_time_array = np.zeros([len(hidden_layer_sizes), len(k_list)])
     testing_accuracy_array = np.zeros([len(hidden_layer_sizes), len(k_list)])
     # Loads the original data
-    train_data, test_data = neural_network_training.get_MNIST()
+    train_data, test_data = neural_network_training.joel_get_MNIST()
+
 
     for i, hidden_layer_size in enumerate(hidden_layer_sizes):
         for j, k in enumerate(k_list):
             print(f'Training network with k={k}, hidden_layer_size={hidden_layer_size}')
             # Calls on test_pca_nn for train and test the nn
-            testing_accuracy, training_time, testing_time = neural_network_training.test_pca_nn(k, epochs=10,
-                                                                                                hidden_layer_size=hidden_layer_size,
-                                                                                                train=train_data,
-                                                                                                test=test_data)
+            testing_accuracy, training_time, testing_time = neural_network_training.test_joel_pca_nn(k, epochs=10,
+                                                                                                     hidden_layer_size=hidden_layer_size,
+                                                                                                     train=train_data,
+                                                                                                     test=test_data)
             # Stores the results to later save in a csv file
             training_time_array[i, j] = training_time
             testing_time_array[i, j] = testing_time
             testing_accuracy_array[i, j] = testing_accuracy
     # Writes to a csv file to save the data
     pd.DataFrame(training_time_array, columns=k_list, index=np.array(hidden_layer_sizes)).to_csv(
-        os.path.join(neural_network_training.get_project_root(), 'neural_network_image_classification', 'results',
+        os.path.join(tools.get_project_root(), 'neural_network_image_classification', 'results',
                      'training_time_pca.csv'), sep=';')
     pd.DataFrame(testing_time_array, columns=k_list, index=np.array(hidden_layer_sizes)).to_csv(
-        os.path.join(neural_network_training.get_project_root(), 'neural_network_image_classification', 'results',
+        os.path.join(tools.get_project_root(), 'neural_network_image_classification', 'results',
                      'testing_time_pca.csv'), sep=';')
     pd.DataFrame(testing_accuracy_array, columns=k_list, index=np.array(hidden_layer_sizes)).to_csv(
-        os.path.join(neural_network_training.get_project_root(), 'neural_network_image_classification', 'results',
+        os.path.join(tools.get_project_root(), 'neural_network_image_classification', 'results',
                      'testing_accuracy_pca.csv'), sep=';')
 
 
@@ -381,13 +378,13 @@ def plot_joel_pca_matrix():
     """
     # Loads the already existing results from csv files
     testing_accuracy = pd.read_csv(
-        os.path.join(neural_network_training.get_project_root(), 'neural_network_image_classification', 'results',
+        os.path.join(tools.get_project_root(), 'neural_network_image_classification', 'results',
                      'testing_accuracy_pca.csv'), sep=';', index_col=0)
     testing_time = pd.read_csv(
-        os.path.join(neural_network_training.get_project_root(), 'neural_network_image_classification', 'results',
+        os.path.join(tools.get_project_root(), 'neural_network_image_classification', 'results',
                      'testing_time_pca.csv'), sep=';', index_col=0)
     training_time = pd.read_csv(
-        os.path.join(neural_network_training.get_project_root(), 'neural_network_image_classification', 'results',
+        os.path.join(tools.get_project_root(), 'neural_network_image_classification', 'results',
                      'training_time_pca.csv'), sep=';', index_col=0)
     # Creates the figure to plot in
     fig, axs = plt.subplots(1, 3, figsize=(12, 4))

@@ -11,8 +11,8 @@ from PyQt5 import QtCore
 import extra_filer.extra_tools as tools
 import svd_image_compression.image_compression as svd_imagecompression
 import neural_network_image_classification.neural_network_testing as nn_testing
-import pca_image_classification.new_clean_image_classification as pca_classification
-import pca_image_classification.new_clean_plotter as pca_plotter
+import pca_image_classification.pca_classification as pca_classification
+import pca_image_classification.pca_classification_plotter as pca_plotter
 
 
 class MainWindow(QMainWindow):
@@ -323,7 +323,11 @@ class SVDWorker(QThread):
         self.kwargs = kwargs
 
     def run(self):
-        result = self.func(*self.args, **self.kwargs)
+        try:
+            result = self.func(*self.args, **self.kwargs)
+        except Exception as e:
+            sys.excepthook(e.__class__, e, sys.exc_info()[2])
+            self.exit()
         self.finished.emit(result)
 
 class NormalWorker(QThread):
@@ -336,7 +340,12 @@ class NormalWorker(QThread):
         self.kwargs = kwargs
 
     def run(self):
-        self.func(*self.args, **self.kwargs)
+        try:
+            self.func(*self.args, **self.kwargs)
+        except Exception as e:
+            sys.excepthook(e.__class__, e, sys.exc_info()[2])
+            self.exit()
+            self.finished.emit()
         self.finished.emit()
 
 

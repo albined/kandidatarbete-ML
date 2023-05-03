@@ -16,7 +16,6 @@ import time
 import pandas as pd
 import torch.nn.functional as F
 
-
 timelog = tools.EasyTimeLog()
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -128,88 +127,7 @@ class NormalMNISTDataset(Dataset):
         return data, label
 
 
-def get_MNIST():
-    """A methods which will return the MNIST data in a form of train and test data as tensors"""
-    # Defines how the data would look like, For example somtimes it flips so the data are up side down, to learn better. OBS transform is only a parameter
-    # Change this later
-    transform = transforms.Compose([
-        transforms.Resize((256, 256)),  # resize the input image to (256, 256)
-        transforms.RandomCrop(224),  # randomly crop the image to (224, 224)
-        transforms.RandomHorizontalFlip(),  # randomly flip the image horizontally
-        transforms.ToTensor(),  # convert the image to a PyTorch tensor
-    ])
-    mnist_train = MNIST('./data', train=True, download=True, transform=transforms.ToTensor())
-    mnist_test = MNIST('./data', train=False, download=True, transform=transforms.ToTensor())
-    return mnist_train, mnist_test
 
-
-def get_ISIC():
-    """ A methods which will return the ISIC data in a form of train and test data as tensors"""
-    # Maybe use svd_k on ISIC database if it's working to train on U_k, Z_k and V_k
-    pass
-
-
-def truncated_svd(A, k: int, SVD_k=False):
-    """ A method for truncated svd, which return a the svd, U, Z and V truncated with rang k
-    Param: A = data, k = Rang, SVD_k = if you want the svd_k
-    Return: U, Z, V and mabe svd all trunkated with rang k
-    """
-    U, Z, V = np.linalg.svd(A, full_matrices=True)  # Note: Z is not a diagonal matrix, only a vector
-    # Checks the dimension on the input and then Calculate truncated U, Z and V
-    if A.ndim == 3:
-        U_k = U[:, :, :k]  # shape (60000,28,k)
-        Z_k = Z[:, :k]  # shape (60000,k)
-        V_k = V[:, :k, :]  # shape (60000,k,28)
-        if SVD_k is True:
-            # Calculate the truncated SVD
-            # must use np.einsum because np.array matrix has a limit on the shape, np.einsum will multiply elementwise in shape of 'ijk,ik,ikl->ijl'
-            svd_k = np.einsum('ijk,ik,ikl->ijl', U_k, Z_k, V_k)  # shape (60000,28,28)
-            return U_k, Z_k, V_k, svd_k
-    elif A.ndim == 2:
-        U_k = U[:, :k]  # shape (28,k)
-        Z_k = Z[:k]  # shape (k)
-        V_k = V[:k, :]  # shape (k,28)
-        if SVD_k is True:
-            # Calculate the truncated SVD
-            svd_k = np.matrix(U_k) * np.diag(Z_k) * np.matrix(V_k)  # shape (28,28)
-            return U_k, Z_k, V_k, svd_k
-    else:
-        ValueError("Input matrix should be 2D or 3D.")
-    return U_k, Z_k, V_k
-
-
-def pca_matrix(A, k):
-    """ Calculates the score matrix by truncated svd and given rang
-    param: A = matrix, k = rang
-    return: score matris with rang k as a tensor
-    """
-    A_mean = torch.mean(A.float(), dim=2, keepdim=True)
-    A = A - A_mean
-    U_k, Z_k, _ = truncated_svd(A, k, SVD_k=False)
-    # Calculation the score matix
-    T_k_nparray = np.einsum('ijk,ik->ijk', U_k, Z_k)  # np.einsum will multiply elementwise in shape of 'ijk,ik->ijk'
-    T_k_tensor = torch.from_numpy(T_k_nparray)
-    T_k_tensor = T_k_tensor.unsqueeze(1)
-    return T_k_tensor
-
-
-def load_data(path_name: str):
-    """ Function that loads csv files
-    Input: The path to the data as a string
-    Output: Data as
-    """
-    data = pd.read_csv(path_name, header=None, sep=';', dtype=float)
-    matrix = data.values
-    return matrix
-
-
-def plot_images(data):
-    """ A method that's plots the given matrix (image)
-    Param: data = matrix (image)
-    """
-    fig = plt.figure
-    plt.imshow(data, cmap='gray')
-    plt.show()
 
 
 def train_module(model: nn.modules, train_data: DataLoader, name: str, epochs: int):
@@ -240,132 +158,6 @@ def train_module(model: nn.modules, train_data: DataLoader, name: str, epochs: i
         os.makedirs(os.path.dirname(path))
     torch.save(model.state_dict(), path)
     return train_time  # the model don't need to be returned, it's already updated
-
-
-def load_model(model: nn.Module, name: str):
-    """ A method which loads the saved parameters into a model.
-     Param: module = NN model, name = the name of model the saved model
-       """
-    # loads the model (assume you are in the big folder)
-    path = os.path.join(tools.get_project_root(), 'neural_network_image_classification', 'saved_models', name + '.pth')
-    model.load_state_dict(torch.load(path))
-    model.to(device)
-
-
-def train_score_nn(k, epochs=10, hidden_layer_size=128):
-    """
-    Fast way to train a score-matrix dataset
-    Trains a Neural network with only linear layers
-    """
-    dataset = ScoreDataset(k)
-    dataloader = DataLoader(dataset, batch_size=64, shuffle=True)
-    module = linear_module_general(k, hidden_layer_size)
-    module.to(device)
-    training_time = train_module(module, dataloader,
-                                 f'linear_model_score_epoch_{epochs}_k={k}_layersize_{hidden_layer_size}',
-                                 epochs=epochs)
-    timelog.log(training_time, f'k={k}', f'hidden layer size {hidden_layer_size}', f'length dataset: {len(dataset)}',
-                f'epochs={epochs}')
-    return training_time
-
-
-def test_score_nn(k, epochs=10, hidden_layer_size=128, tests=1):
-    module = linear_module_general(k, hidden_layer_size)
-    module.to(device)
-    load_model(module, f'linear_model_score_epoch_{epochs}_k={k}_layersize_{hidden_layer_size}')
-    dataset = ScoreDataset(k, datatype='test')
-    dataloader = DataLoader(dataset, batch_size=64, shuffle=True)
-    result_array = np.array([test_model(module, dataloader) for _ in range(tests)])
-    accuracy, testing_time = result_array.mean(axis=0)
-    testing_time /= len(dataset)
-    timelog.log(testing_time, f'k={k}', f'hidden layer size {hidden_layer_size}', f'length dataset: {len(dataset)}',
-                f'epochs={epochs}', f'accuracy {accuracy}')
-    return accuracy, testing_time
-
-
-def train_svd_nn(k, u_v, epochs=10, hidden_layer_size=128):
-    """ Trains the U or V dataset on a linear neural network """
-    dataset = SVDDataset(k, u_v, reshape=False)
-    dataloader = DataLoader(dataset, batch_size=64, shuffle=True)
-    module = linear_module_general(k * 28, hidden_layer_size)  # We have k*28 input values
-    module.to(device)
-    training_time = train_module(module, dataloader,
-                                 f'linear_model_{u_v}_epochs={epochs}_k={k}_layersize={hidden_layer_size}',
-                                 epochs=epochs)
-    timelog.log(training_time, f'k={k}', f'type: {u_v}', f'hidden layer size {hidden_layer_size}',
-                f'length dataset: {len(dataset)}', f'epochs={epochs}')
-    return training_time
-
-
-def test_svd_nn(k, u_v, epochs=10, hidden_layer_size=128, tests=1):
-    module = linear_module_general(k * 28, hidden_layer_size)
-    module.to(device)
-    load_model(module, f'linear_model_{u_v}_epochs={epochs}_k={k}_layersize={hidden_layer_size}')
-    dataset = SVDDataset(k, u_v, reshape=False, datatype='test')
-    dataloader = DataLoader(dataset, batch_size=64, shuffle=True)
-    result_array = np.array([test_model(module, dataloader) for _ in range(tests)])
-    accuracy, testing_time = result_array.mean(axis=0)
-    testing_time /= len(dataset)
-    timelog.log(testing_time, f'k={k}', f'type: {u_v}', f'hidden layer size {hidden_layer_size}',
-                f'length dataset: {len(dataset)}', f'epochs={epochs}', f'accuracy {accuracy}')
-    return accuracy, testing_time
-
-
-def train_normal_mnist_nn(epochs=10, hidden_layer_size=128):
-    """ Trains the U or V dataset on a linear neural network """
-    torch.no_grad()
-    dataset = NormalMNISTDataset()
-    dataloader = DataLoader(dataset, batch_size=64, shuffle=True)
-    module = linear_module_general(784, hidden_layer_size)  # We have k*28 input values
-    module.to(device)
-    training_time = train_module(module, dataloader,
-                                 f'normal_mnist_linear_epochs={epochs}_layersize={hidden_layer_size}', epochs=epochs)
-    timelog.log(training_time, f'hidden layer size {hidden_layer_size}', f'length dataset: {len(dataset)}',
-                f'epochs={epochs}')
-    return training_time
-
-
-def test_normal_mnist_nn(epochs=10, hidden_layer_size=128, tests=1):
-    module = linear_module_general(784, hidden_layer_size)
-    module.to(device)
-    load_model(module, f'normal_mnist_linear_epochs={epochs}_layersize={hidden_layer_size}')
-    dataset = NormalMNISTDataset(datatype='test')
-    dataloader = DataLoader(dataset, batch_size=64, shuffle=True)
-    result_array = np.array([test_model(module, dataloader) for _ in range(tests)])
-    accuracy, testing_time = result_array.mean(axis=0)
-    testing_time /= len(dataset)
-    timelog.log(testing_time, f'hidden layer size {hidden_layer_size}', f'length dataset: {len(dataset)}',
-                f'epochs={epochs}', f'accuracy {accuracy}')
-    return accuracy, testing_time
-
-
-def train_cnn_mnist_nn(epochs=10, linear_layer_size=128, convolutional_layer_size=16):
-    """ Trains the U or V dataset on a linear neural network """
-    torch.no_grad()
-    dataset = NormalMNISTDataset(square=True)
-    dataloader = DataLoader(dataset, batch_size=64, shuffle=True)
-    module = ConvAlbin(linear_layer_size, convolutional_layer_size)
-    module.to(device)
-    training_time = train_module(module, dataloader,
-                                 f'cnn_mnist_epochs={epochs}_layersize={linear_layer_size}_cnn{convolutional_layer_size}',
-                                 epochs=epochs)
-    timelog.log(training_time, f'hidden layer size {linear_layer_size}',
-                f'length dataset: {len(dataset)} and {convolutional_layer_size}', f'epochs={epochs}')
-    return training_time
-
-
-def test_cnn_mnist_nn(epochs=10, linear_layer_size=128, convolutional_layer_size=16, tests=1):
-    module = ConvAlbin(linear_layer_size, convolutional_layer_size)
-    module.to(device)
-    load_model(module, f'cnn_mnist_epochs={epochs}_layersize={linear_layer_size}_cnn{convolutional_layer_size}')
-    dataset = NormalMNISTDataset(datatype='test', square=True)
-    dataloader = DataLoader(dataset, batch_size=64, shuffle=True)
-    result_array = np.array([test_model(module, dataloader) for _ in range(tests)])
-    accuracy, testing_time = result_array.mean(axis=0)
-    testing_time /= len(dataset)
-    timelog.log(testing_time, f'hidden layer size {linear_layer_size} and {convolutional_layer_size}',
-                f'length dataset: {len(dataset)}', f'epochs={epochs}', f'accuracy {accuracy}')
-    return accuracy, testing_time
 
 
 def test_model(model: nn.Module, test_data: DataLoader):
@@ -400,21 +192,142 @@ def test_model(model: nn.Module, test_data: DataLoader):
 
     return prediction_rate, time_taken
 
+def load_model(model: nn.Module, name: str):
+    """ A method which loads the saved parameters into a model.
+     Param: module = NN model, name = the name of model the saved model
+       """
+    # loads the model (assume you are in the big folder)
+    path = os.path.join(tools.get_project_root(), 'neural_network_image_classification', 'saved_models', name + '.pth')
+    if os.path.exists(path):
+        model.load_state_dict(torch.load(path))
+        model.to(device)
+        return True
+    else:
+        raise FileNotFoundError(f'Model doesn\'t exist: {os.path.basename(path)}')
 
-def get_project_root():
-    """ Taken from "Tools" (can't find the folder)
+
+
+def train_score_nn(k, epochs=10, hidden_layer_size=128):
     """
-    current_file = os.path.abspath(__file__)
-    current_directory = os.path.dirname(current_file)
-    project_root = os.path.dirname(current_directory)
-    return project_root
+    Fast way to train a score-matrix dataset
+    Trains a Neural network with only linear layers
+    """
+    dataset = ScoreDataset(k)
+    dataloader = DataLoader(dataset, batch_size=64, shuffle=True)
+    module = LinearModule(k, hidden_layer_size)
+    module.to(device)
+    training_time = train_module(module, dataloader,
+                                 f'linear_model_score_epoch_{epochs}_k={k}_layersize_{hidden_layer_size}',
+                                 epochs=epochs)
+    timelog.log(training_time, f'k={k}', f'hidden layer size {hidden_layer_size}', f'length dataset: {len(dataset)}',
+                f'epochs={epochs}')
+    return training_time
 
 
-def test_pca_nn(k, epochs: int, hidden_layer_size: int, train: torch.Tensor, test: torch.Tensor):
+def test_score_nn(k, epochs=10, hidden_layer_size=128, tests=1):
+    module = LinearModule(k, hidden_layer_size)
+    module.to(device)
+    load_model(module, f'linear_model_score_epoch_{epochs}_k={k}_layersize_{hidden_layer_size}')
+    dataset = ScoreDataset(k, datatype='test')
+    dataloader = DataLoader(dataset, batch_size=64, shuffle=True)
+    result_array = np.array([test_model(module, dataloader) for _ in range(tests)])
+    accuracy, testing_time = result_array.mean(axis=0)
+    testing_time /= len(dataset)
+    timelog.log(testing_time, f'k={k}', f'hidden layer size {hidden_layer_size}', f'length dataset: {len(dataset)}',
+                f'epochs={epochs}', f'accuracy {accuracy}')
+    return accuracy, testing_time
+
+
+def train_svd_nn(k, u_v, epochs=10, hidden_layer_size=128):
+    """ Trains the U or V dataset on a linear neural network """
+    dataset = SVDDataset(k, u_v, reshape=False)
+    dataloader = DataLoader(dataset, batch_size=64, shuffle=True)
+    module = LinearModule(k * 28, hidden_layer_size)  # We have k*28 input values
+    module.to(device)
+    training_time = train_module(module, dataloader,
+                                 f'linear_model_{u_v}_epochs={epochs}_k={k}_layersize={hidden_layer_size}',
+                                 epochs=epochs)
+    timelog.log(training_time, f'k={k}', f'type: {u_v}', f'hidden layer size {hidden_layer_size}',
+                f'length dataset: {len(dataset)}', f'epochs={epochs}')
+    return training_time
+
+
+def test_svd_nn(k, u_v, epochs=10, hidden_layer_size=128, tests=1):
+    module = LinearModule(k * 28, hidden_layer_size)
+    module.to(device)
+    load_model(module, f'linear_model_{u_v}_epochs={epochs}_k={k}_layersize={hidden_layer_size}')
+    dataset = SVDDataset(k, u_v, reshape=False, datatype='test')
+    dataloader = DataLoader(dataset, batch_size=64, shuffle=True)
+    result_array = np.array([test_model(module, dataloader) for _ in range(tests)])
+    accuracy, testing_time = result_array.mean(axis=0)
+    testing_time /= len(dataset)
+    timelog.log(testing_time, f'k={k}', f'type: {u_v}', f'hidden layer size {hidden_layer_size}',
+                f'length dataset: {len(dataset)}', f'epochs={epochs}', f'accuracy {accuracy}')
+    return accuracy, testing_time
+
+
+def train_normal_mnist_nn(epochs=10, hidden_layer_size=128):
+    """ Trains the U or V dataset on a linear neural network """
+    torch.no_grad()
+    dataset = NormalMNISTDataset()
+    dataloader = DataLoader(dataset, batch_size=64, shuffle=True)
+    module = LinearModule(784, hidden_layer_size)  # We have k*28 input values
+    module.to(device)
+    training_time = train_module(module, dataloader,
+                                 f'normal_mnist_linear_epochs={epochs}_layersize={hidden_layer_size}', epochs=epochs)
+    timelog.log(training_time, f'hidden layer size {hidden_layer_size}', f'length dataset: {len(dataset)}',
+                f'epochs={epochs}')
+    return training_time
+
+
+def test_normal_mnist_nn(epochs=10, hidden_layer_size=128, tests=1):
+    module = LinearModule(784, hidden_layer_size)
+    module.to(device)
+    load_model(module, f'normal_mnist_linear_epochs={epochs}_layersize={hidden_layer_size}')
+    dataset = NormalMNISTDataset(datatype='test')
+    dataloader = DataLoader(dataset, batch_size=64, shuffle=True)
+    result_array = np.array([test_model(module, dataloader) for _ in range(tests)])
+    accuracy, testing_time = result_array.mean(axis=0)
+    testing_time /= len(dataset)
+    timelog.log(testing_time, f'hidden layer size {hidden_layer_size}', f'length dataset: {len(dataset)}',
+                f'epochs={epochs}', f'accuracy {accuracy}')
+    return accuracy, testing_time
+
+
+def train_cnn_mnist_nn(epochs=10, linear_layer_size=128, convolutional_layer_size=16):
+    """ Trains the U or V dataset on a linear neural network """
+    torch.no_grad()
+    dataset = NormalMNISTDataset(square=True)
+    dataloader = DataLoader(dataset, batch_size=64, shuffle=True)
+    module = ConvModule(linear_layer_size, convolutional_layer_size)
+    module.to(device)
+    training_time = train_module(module, dataloader,
+                                 f'cnn_mnist_epochs={epochs}_layersize={linear_layer_size}_cnn{convolutional_layer_size}',
+                                 epochs=epochs)
+    timelog.log(training_time, f'hidden layer size {linear_layer_size}',
+                f'length dataset: {len(dataset)} and {convolutional_layer_size}', f'epochs={epochs}')
+    return training_time
+
+
+def test_cnn_mnist_nn(epochs=10, linear_layer_size=128, convolutional_layer_size=16, tests=1):
+    module = ConvModule(linear_layer_size, convolutional_layer_size)
+    module.to(device)
+    load_model(module, f'cnn_mnist_epochs={epochs}_layersize={linear_layer_size}_cnn{convolutional_layer_size}')
+    dataset = NormalMNISTDataset(datatype='test', square=True)
+    dataloader = DataLoader(dataset, batch_size=64, shuffle=True)
+    result_array = np.array([test_model(module, dataloader) for _ in range(tests)])
+    accuracy, testing_time = result_array.mean(axis=0)
+    testing_time /= len(dataset)
+    timelog.log(testing_time, f'hidden layer size {linear_layer_size} and {convolutional_layer_size}',
+                f'length dataset: {len(dataset)}', f'epochs={epochs}', f'accuracy {accuracy}')
+    return accuracy, testing_time
+
+
+def test_joel_pca_nn(k, epochs: int, hidden_layer_size: int, train: torch.Tensor, test: torch.Tensor):
     name = 'linear_model_pca,k=' + str(k) + ',layer=' + str(hidden_layer_size)
     # formating data
-    T_k_train = pca_matrix(train.data, k)
-    T_k_test = pca_matrix(test.data, k)
+    T_k_train = joel_pca_matrix(train.data, k)
+    T_k_test = joel_pca_matrix(test.data, k)
     train_shape = T_k_train.shape[2] * T_k_train.shape[3]
     T_k_train = SimpleDataset(T_k_train, train.targets)
     T_k_test = SimpleDataset(T_k_test, test.targets)
@@ -422,7 +335,7 @@ def test_pca_nn(k, epochs: int, hidden_layer_size: int, train: torch.Tensor, tes
     data_train = DataLoader(T_k_train, batch_size=64, shuffle=True)
     data_test = DataLoader(T_k_test, batch_size=64, shuffle=True)
     # defines the nn
-    lnn = linear_module_general(train_shape, hidden_layer_size)
+    lnn = LinearModule(train_shape, hidden_layer_size)
     lnn.to(device)
     # train
     train_time = train_module(lnn, data_train, name, epochs)
@@ -433,22 +346,53 @@ def test_pca_nn(k, epochs: int, hidden_layer_size: int, train: torch.Tensor, tes
     return pre_rate, train_time, pre_time
 
 
-def test_LeNet5(train_data, test_data, epochs=10):
-    """ A function thats train and test the LeNet5 nn
-    NOTE: Only works for normal image (not fomated)
+
+def joel_get_MNIST():
+    """A methods which will return the MNIST data in a form of train and test data as tensors"""
+    mnist_train = MNIST('./data', train=True, download=True, transform=transforms.ToTensor())
+    mnist_test = MNIST('./data', train=False, download=True, transform=transforms.ToTensor())
+    return mnist_train, mnist_test
+
+
+def joel_truncated_svd(A, k: int, SVD_k=False):
+    """ A method for truncated svd, which return a the svd, U, Z and V truncated with rang k
+    Param: A = data, k = Rang, SVD_k = if you want the svd_k
+    Return: U, Z, V and mabe svd all trunkated with rang k
     """
-    # Loads the model
-    LeNet5 = lenet5()
-    LeNet5_name = 'LeNet5_normal'
-    # Train
-    train_time = train_module(model=LeNet5, train_data=train_data, name=LeNet5_name, epochs=epochs)
-    # Test
-    pre_rate, pre_time = test_model(model=LeNet5, test_data=test_data)
+    U, Z, V = np.linalg.svd(A, full_matrices=True)  # Note: Z is not a diagonal matrix, only a vector
+    # Checks the dimension on the input and then Calculate truncated U, Z and V
+    if A.ndim == 3:
+        U_k = U[:, :, :k]  # shape (60000,28,k)
+        Z_k = Z[:, :k]  # shape (60000,k)
+        V_k = V[:, :k, :]  # shape (60000,k,28)
+        if SVD_k is True:
+            # Calculate the truncated SVD
+            # must use np.einsum because np.array matrix has a limit on the shape, np.einsum will multiply elementwise in shape of 'ijk,ik,ikl->ijl'
+            svd_k = np.einsum('ijk,ik,ikl->ijl', U_k, Z_k, V_k)  # shape (60000,28,28)
+            return U_k, Z_k, V_k, svd_k
+    elif A.ndim == 2:
+        U_k = U[:, :k]  # shape (28,k)
+        Z_k = Z[:k]  # shape (k)
+        V_k = V[:k, :]  # shape (k,28)
+        if SVD_k is True:
+            # Calculate the truncated SVD
+            svd_k = np.matrix(U_k) * np.diag(Z_k) * np.matrix(V_k)  # shape (28,28)
+            return U_k, Z_k, V_k, svd_k
+    else:
+        raise ValueError("Input matrix should be 2D or 3D.")
+    return U_k, Z_k, V_k
 
-    return pre_rate, train_time, pre_time
 
-
-
-
-
-
+def joel_pca_matrix(A, k):
+    """ Calculates the score matrix by truncated svd and given rang
+    param: A = matrix, k = rang
+    return: score matris with rang k as a tensor
+    """
+    A_mean = torch.mean(A.float(), dim=2, keepdim=True)
+    A = A - A_mean
+    U_k, Z_k, _ = joel_truncated_svd(A, k, SVD_k=False)
+    # Calculation the score matix
+    T_k_nparray = np.einsum('ijk,ik->ijk', U_k, Z_k)  # np.einsum will multiply elementwise in shape of 'ijk,ik->ijk'
+    T_k_tensor = torch.from_numpy(T_k_nparray)
+    T_k_tensor = T_k_tensor.unsqueeze(1)
+    return T_k_tensor

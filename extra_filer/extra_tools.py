@@ -47,7 +47,6 @@ class EasyTimeLog:
             f.write(s)
 
 
-
 class TimeTracker:
     def __init__(self, log_string, path):
         self.start_time = time.time()
@@ -64,29 +63,11 @@ class TimeTracker:
         return time.time() - self.start_time
 
 
-
-
-
 def get_project_root():
     current_file = os.path.abspath(__file__)
     current_directory = os.path.dirname(current_file)
     project_root = os.path.dirname(current_directory)
     return project_root
-
-
-def append_row_to_csv(array_to_append, save_path, relative_root=False):
-    warn('This is deprecated, use append_matrix_to_csv', DeprecationWarning, stacklevel=2)
-    if relative_root:
-        save_path = os.path.join(get_project_root(), save_path)
-
-    if not os.path.exists(save_path):
-        # Create file if it does not exist
-        with open(save_path, 'a'):
-            pass
-
-    df = pd.DataFrame(array_to_append.reshape(1, len(array_to_append)))
-    df.to_csv(save_path, index=False, header=False, mode='a', sep=';')
-    print(f'Saved file to {save_path}')
 
 
 def append_matrix_to_csv(array_to_append, save_path, relative_root=False, folder=None):

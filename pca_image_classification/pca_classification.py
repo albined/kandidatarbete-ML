@@ -9,6 +9,9 @@ import pandas as pd
 tl = tools.EasyTimeLog()
 
 class GeneralPCA(ABC):
+    """
+    Defines the structure and what methods a PCA calculating class must contain
+    """
     def __init__(self, training_data, testing_data):
         self.training_data = training_data
         self.testing_data = testing_data
@@ -42,6 +45,9 @@ class GeneralPCA(ABC):
 
 
 class CovariancePCA(GeneralPCA):
+    """
+    Calculates PCA using SVD and a covariance matrix
+    """
     def __init__(self, training_data, testing_data):
         tt = tl.start_log(f'training_size: {len(training_data)}')
         super().__init__(training_data, testing_data)
@@ -64,6 +70,9 @@ class CovariancePCA(GeneralPCA):
 
 
 class SvdPCA(GeneralPCA):
+    """
+    Calculates PCA using SVD on the original matrix
+    """
     def __init__(self, training_data, testing_data):
         tt = tl.start_log(f'training_size: {len(training_data)}')
         super().__init__(training_data, testing_data)
@@ -90,6 +99,9 @@ class SvdPCA(GeneralPCA):
 
 
 class SklearnPCA(GeneralPCA):
+    """
+    Calculates PCA using the existing library sklearn
+    """
     def __init__(self, training_data, testing_data):
         tt = tl.start_log(f'training_size: {len(training_data)}')
         super().__init__(training_data, testing_data)
@@ -130,6 +142,9 @@ class SklearnPCA(GeneralPCA):
 
 
 class LoadPCA(GeneralPCA):
+    """
+    Laods a dataset in the same format as you'd get if you computed it
+    """
     def __init__(self):
         """ Class for loading in previously calculated files returns 0 for the times """
         super().__init__(np.array([0]), np.array([0]))
@@ -209,7 +224,7 @@ def test_so_that_all_pca_methods_give_the_same_resutl():
     assert np.allclose(a1, c1)
     assert np.allclose(a2, b2)
     assert np.allclose(a2, c2)
-    # This does not always compute true since the sign of the eigenvectors are arbitrary
+    # This does not always compute since the sign of the eigenvectors are arbitrary
 
 
 def test_pca(save=True, training_set_sizes=None, k_list=None):
