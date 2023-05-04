@@ -131,8 +131,9 @@ def test_cnn_matrix(onlytest=False, linear_layer_sizes=None, convolutional_layer
         for j, convolutional_layer_size in enumerate(convolutional_layer_sizes):
             print(f'Testing network with fcc={linear_layer_size}, cn2d={convolutional_layer_size}')
             if not onlytest:
-                training_time = neural_network_training.train_cnn_mnist_nn(linear_layer_size=linear_layer_size,
-                                                                           convolutional_layer_size=convolutional_layer_size)
+                training_time = \
+                    neural_network_training.train_cnn_mnist_nn(linear_layer_size=linear_layer_size,
+                                                               convolutional_layer_size=convolutional_layer_size)
             testing_accuracy, testing_time = neural_network_training.test_cnn_mnist_nn(
                 linear_layer_size=linear_layer_size, convolutional_layer_size=convolutional_layer_size, tests=10)
 
