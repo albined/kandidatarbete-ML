@@ -6,7 +6,8 @@ import os
 timelog = EasyTimeLog()
 
 
-def create_pca_library(train_set, label_train, test_set, label_test, principal_components, save_folder=None, dataset_name='', normalize=True):
+def create_pca_library(train_set, label_train, test_set, label_test, principal_components, save_folder=None,
+                       dataset_name='', normalize=True):
     # Define the pca, it's much easier if we just use a library
     tl = timelog.start_log(f'PCA on the training set with {len(train_set)} images', f'k={principal_components}')
     pca = PCA(n_components=principal_components)
@@ -18,14 +19,14 @@ def create_pca_library(train_set, label_train, test_set, label_test, principal_c
     if normalize:
         mean = pca_train.mean()
         std = pca_train.std()
-        pca_train = (pca_train - mean)/std
+        pca_train = (pca_train - mean) / std
     tl.stop()
 
     tl = timelog.start_log(f'PCA projection of {len(test_set)} testing images', f'k={principal_components}')
     pca_test = pca.transform(test_set)
     if normalize:
         print(f'normalizing mean: {mean}, std: {std}')
-        pca_test = (pca_test - mean)/std
+        pca_test = (pca_test - mean) / std
     tl.stop()
 
     if save_folder is not None:
@@ -66,8 +67,8 @@ def create_svd_libaries(train_set, label_train, test_set, label_test, truncation
         Vtmean = Vt_train.mean()
         Ustd = U_train.std()
         Vtstd = Vt_train.std()
-        U_train = (U_train - Umean)/Ustd
-        Vt_train = (Vt_train - Vtmean)/Vtstd
+        U_train = (U_train - Umean) / Ustd
+        Vt_train = (Vt_train - Vtmean) / Vtstd
     tl.stop()
 
     U_test = np.zeros((train_set.shape[0], train_set.shape[1] * truncation))
@@ -81,8 +82,8 @@ def create_svd_libaries(train_set, label_train, test_set, label_test, truncation
         U_test[i, :] = u_k.flatten()
         Vt_test[i, :] = v_k.flatten()
     if normalize:
-        U_test = (U_test - Umean)/Ustd
-        Vt_test = (Vt_test - Vtmean)/Vtstd
+        U_test = (U_test - Umean) / Ustd
+        Vt_test = (Vt_test - Vtmean) / Vtstd
     tl.stop()
 
     if save_folder is not None:
@@ -115,17 +116,16 @@ def create_svd_libaries(train_set, label_train, test_set, label_test, truncation
 
 
 def pca_library_main(k, dataset_name='MNIST'):
-    N_test = -1  # all
-    pixels_train, labels_train = load_mnist(True, N_test)
-    pixels_test, labels_test = load_mnist(False, N_test)
+    n_test = -1  # all
+    pixels_train, labels_train = load_mnist(True, n_test)
+    pixels_test, labels_test = load_mnist(False, n_test)
     create_pca_library(pixels_train, labels_train, pixels_test, labels_test, k,
                        save_folder='Generated dataset variants', dataset_name=dataset_name)
 
 
 def svd_libraries_main(k, dataset_name='MNIST'):
-    N_test = -1  # all
-    pixels_train, labels_train = load_mnist(True, N_test, True)
-    pixels_test, labels_test = load_mnist(False, N_test, True)
+    n_test = -1  # all
+    pixels_train, labels_train = load_mnist(True, n_test, True)
+    pixels_test, labels_test = load_mnist(False, n_test, True)
     create_svd_libaries(pixels_train, labels_train, pixels_test, labels_test, k,
                         save_folder='Generated dataset variants', dataset_name=dataset_name)
-

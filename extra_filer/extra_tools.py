@@ -107,18 +107,16 @@ def load_mnist(training=True, max_number=-1, keep_square=False, normalize=True, 
     labels_testing = datasets.MNIST(root=save_path, train=False, download=True).test_labels.numpy()
 
     if normalize:
-        data_training = data_training/255
-        data_testing = data_testing/255
+        data_training = data_training / 255
+        data_testing = data_testing / 255
         training_mean = 0.1306604762738429  # data_training.mean()
         training_std = 0.3081078038564622  # data_training.std()
-        data_training = (data_training - training_mean)/training_std
-        data_testing = (data_testing - training_mean)/training_std
-
+        data_training = (data_training - training_mean) / training_std
+        data_testing = (data_testing - training_mean) / training_std
 
     if not keep_square:
         data_training = data_training.reshape(-1, 28 ** 2)
         data_testing = data_testing.reshape(-1, 28 ** 2)
-
 
     if training:
         data = data_training
@@ -142,6 +140,8 @@ def load_mnist(training=True, max_number=-1, keep_square=False, normalize=True, 
 def load_pca_mnist(directory_name, create_if_nonexistent=True, dtype='float32'):
     """
     Easy way to load the PCA modified dataset.
+    :param dtype: -
+    :param create_if_nonexistent: -
     :param directory_name: Directory name inside "Generated dataset variants" ex "pca_transformed_MNIST_k=10"
     :return: training set, training labels, testing set, testing labels
     """
@@ -193,6 +193,7 @@ def load_pca_mnist(directory_name, create_if_nonexistent=True, dtype='float32'):
 def load_svd_mnist(directory_name, reshape=False, k=None, create_if_nonexistent=True, dtype='float32'):
     """
     Easy way to load the modified V or U datasets. Can return them both as 2d matrix of vectors or as a flattened version
+    :param dtype: -
     :param create_if_nonexistent: creates the dataset if it doesn't exist
     :param directory_name: Directory of the folder inside "Generated dataset variants"
     :param reshape: Reshapes each row into 2d matrixes for each eigenvector
@@ -267,7 +268,7 @@ def reduce_pca_dataset(dtrain, train_labels, threshold_mult=0.5, dtype='float32'
         # Compute the average distance for the first 10 occurences of each number since
         # that should be close enough
         average_distance = sum([np.sum(np.square(dnum - dnum[i]), axis=1).mean() for i in range(10)]) / 10
-        threshold = average_distance * (threshold_mult**2)
+        threshold = average_distance * (threshold_mult ** 2)
         distances = np.array(cdist(dnum, dnum, metric='sqeuclidean'))
         pairs = np.argwhere(distances < threshold)
         pairs = [(i, j) for (i, j) in pairs if i < j]  # remove duplicates and self-matches
@@ -277,14 +278,14 @@ def reduce_pca_dataset(dtrain, train_labels, threshold_mult=0.5, dtype='float32'
             if idx % 1000 == 0:
                 pass
                 # print(f'idx: {idx} out of: {len(pairs)}')
-            if not i in used_set:
+            if i not in used_set:
                 used_set.add(j)
                 pair_dict[i].add(i)
                 pair_dict[i].add(j)
         for key, item in pair_dict.items():
             dnum_new.append(dnum[list(item)].mean(axis=0))
         dtrain_reduced += dnum_new
-        dlabels_reduced += [n]*len(dnum_new)
+        dlabels_reduced += [n] * len(dnum_new)
 
     dtrain_reduced = np.array(dtrain_reduced)
     dlabels_reduced = np.array(dlabels_reduced)
@@ -292,5 +293,3 @@ def reduce_pca_dataset(dtrain, train_labels, threshold_mult=0.5, dtype='float32'
     dtrain_reduced = dtrain_reduced.astype(dtype)
 
     return dtrain_reduced, dlabels_reduced
-
-

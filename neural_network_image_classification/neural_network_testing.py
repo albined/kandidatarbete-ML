@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import neural_network_image_classification.neural_network_training as neural_network_training
 import os
 
+
 def test_score_matrix(onlytest=False, hidden_layer_sizes=None, k_list=None):
     if hidden_layer_sizes is None:
         hidden_layer_sizes = [8, 16, 32, 64, 128, 256]
@@ -83,7 +84,6 @@ def test_u_v_matrix(u_v, onlytest=False, hidden_layer_sizes=None, k_list=None):
         os.path.join(save_path, f'{u_v.lower()}_testing_accuracy.csv'), sep=';')
 
 
-
 def test_normal_matrix(onlytest=False, hidden_layer_sizes=None):
     if hidden_layer_sizes is None:
         hidden_layer_sizes = [8, 16, 32, 64, 128, 256]
@@ -140,7 +140,6 @@ def test_cnn_matrix(onlytest=False, linear_layer_sizes=None, convolutional_layer
                 training_time_array[i, j] = training_time
             testing_time_array[i, j] = testing_time
             testing_accuracy_array[i, j] = testing_accuracy
-
 
     save_path = os.path.join(tools.get_project_root(), 'neural_network_image_classification', 'results')
     if not os.path.exists(save_path):
@@ -347,7 +346,6 @@ def test_joel_pca_matrix():
     # Loads the original data
     train_data, test_data = neural_network_training.joel_get_MNIST()
 
-
     for i, hidden_layer_size in enumerate(hidden_layer_sizes):
         for j, k in enumerate(k_list):
             print(f'Training network with k={k}, hidden_layer_size={hidden_layer_size}')
@@ -423,4 +421,3 @@ def plot_joel_pca_matrix():
 
     fig.tight_layout()
     plt.show()
-

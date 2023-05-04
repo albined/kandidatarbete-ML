@@ -1,13 +1,6 @@
-import os.path
-import warnings
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
-import torch.optim as optim
-from torchvision.datasets import MNIST
-from torchvision import transforms
-from torch.utils.data import DataLoader, Dataset
-import numpy as np
+import torch.nn.functional as functional
 
 
 class LinearModule(nn.Module):
@@ -26,7 +19,7 @@ class LinearModule(nn.Module):
         x = torch.relu(self.linear_1(x))
         x = torch.relu(self.linear_2(x))
         x = self.linear_3(x)
-        return F.log_softmax(x, dim=1)
+        return functional.log_softmax(x, dim=1)
 
 
 class ConvModule(nn.Module):

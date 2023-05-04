@@ -1,20 +1,14 @@
 import os.path
 import warnings
-import torch
-import torch.nn as nn
 import torch.optim as optim
 from torchvision.datasets import MNIST
 from torchvision import transforms
 from torch.utils.data import DataLoader, Dataset
 import numpy as np
-# import extra_filer.extra_tools as tools
-from neural_network_image_classification.neural_network_models import *
 import extra_filer.extra_tools as tools
 from neural_network_image_classification.neural_network_models import *
-import matplotlib.pyplot as plt
 import time
-import pandas as pd
-import torch.nn.functional as F
+import torch.nn.functional as functional
 
 timelog = tools.EasyTimeLog()
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -145,7 +139,7 @@ def train_module(model: nn.modules, train_data: DataLoader, name: str, epochs: i
             y = torch.flatten(y)
             optimizer.zero_grad(set_to_none=True)  # resets the gradients before countinue to the next batch
             prediction = model(x)  # predict and makes the forward
-            luss = F.nll_loss(prediction, y)
+            luss = functional.nll_loss(prediction, y)
             luss.backward()  # compute the gradients
             optimizer.step()  # updates the weights
 

@@ -8,10 +8,12 @@ import pandas as pd
 
 tl = tools.EasyTimeLog()
 
+
 class GeneralPCA(ABC):
     """
     Defines the structure and what methods a PCA calculating class must contain
     """
+
     def __init__(self, training_data, testing_data):
         self.training_data = training_data
         self.testing_data = testing_data
@@ -39,15 +41,15 @@ class GeneralPCA(ABC):
         self.testing_data = self.testing_data - mean
         total_mean = self.training_data.mean()
         total_std = self.training_data.std()
-        self.training_data = (self.training_data - total_mean)/total_std
-        self.testing_data = (self.testing_data - total_mean)/total_std
-
+        self.training_data = (self.training_data - total_mean) / total_std
+        self.testing_data = (self.testing_data - total_mean) / total_std
 
 
 class CovariancePCA(GeneralPCA):
     """
     Calculates PCA using SVD and a covariance matrix
     """
+
     def __init__(self, training_data, testing_data):
         tt = tl.start_log(f'training_size: {len(training_data)}')
         super().__init__(training_data, testing_data)
@@ -73,6 +75,7 @@ class SvdPCA(GeneralPCA):
     """
     Calculates PCA using SVD on the original matrix
     """
+
     def __init__(self, training_data, testing_data):
         tt = tl.start_log(f'training_size: {len(training_data)}')
         super().__init__(training_data, testing_data)
@@ -89,7 +92,7 @@ class SvdPCA(GeneralPCA):
         # Sk = np.diag(self.S[:k])
         comp = self.training_data @ self.V[:, :k]
         tt.stop()
-        return comp, tt.time()+self.initial_training_time
+        return comp, tt.time() + self.initial_training_time
 
     def get_testing_components(self, k):
         tt = tl.start_log(f'components: {k}, testing_size: {len(self.testing_data)}')
@@ -102,6 +105,7 @@ class SklearnPCA(GeneralPCA):
     """
     Calculates PCA using the existing library sklearn
     """
+
     def __init__(self, training_data, testing_data):
         tt = tl.start_log(f'training_size: {len(training_data)}')
         super().__init__(training_data, testing_data)
@@ -145,6 +149,7 @@ class LoadPCA(GeneralPCA):
     """
     Laods a dataset in the same format as you'd get if you computed it
     """
+
     def __init__(self):
         """ Class for loading in previously calculated files returns 0 for the times """
         super().__init__(np.array([0]), np.array([0]))
@@ -171,9 +176,11 @@ class ReducedSizePCA(GeneralPCA):
         self.reduction_factor = reduction_factor
 
     def get_training_components(self, k):
-        tt = tl.start_log(f'Reducing size from {len(self.training_data)}', f'reduction factor={self.reduction_factor}', f'k={k}')
+        tt = tl.start_log(f'Reducing size from {len(self.training_data)}', f'reduction factor={self.reduction_factor}',
+                          f'k={k}')
         training_components, training_time = self.pca.get_training_components(k)
-        new_components, new_labels = tools.reduce_pca_dataset(training_components, self.training_labels, self.reduction_factor)
+        new_components, new_labels = tools.reduce_pca_dataset(training_components, self.training_labels,
+                                                              self.reduction_factor)
         self.new_training_labels = new_labels
         tt.stop()
         return new_components, tt.time() + training_time
@@ -198,7 +205,7 @@ def calculate_predictions(pca: GeneralPCA, labels_train, labels_test, k_list: li
         for j, row in enumerate(testing_scores):
             if j % 200 == 0:
                 print(j)
-            distances = np.sum(np.square(training_scores-row), axis=1)
+            distances = np.sum(np.square(training_scores - row), axis=1)
             predicted_number = labels_train[np.argmin(distances)]
             if predicted_number == labels_test[j]:
                 accuracies[i] += 1
@@ -238,8 +245,8 @@ def test_pca(save=True, training_set_sizes=None, k_list=None):
     training_times_list = []
     testing_times_list = []
     test_data, test_labels = tools.load_mnist(False)
-    test_data = np.array(test_data )
-    test_labels = np.array(test_labels )
+    test_data = np.array(test_data)
+    test_labels = np.array(test_labels)
     for i, size in enumerate(training_set_sizes):
         if size == -1:
             train_data, train_labels = tools.load_mnist(True)
@@ -273,17 +280,16 @@ def test_pca(save=True, training_set_sizes=None, k_list=None):
 
         pd.DataFrame(
             accuracies_list, columns=k_list, index=np.array(training_set_sizes)).to_csv(
-                os.path.join(save_dir, 'accuracy.csv'), sep=';')
+            os.path.join(save_dir, 'accuracy.csv'), sep=';')
 
         pd.DataFrame(
             training_times_list, columns=k_list, index=np.array(training_set_sizes)).to_csv(
-                os.path.join(save_dir, 'training_time.csv'), sep=';')
+            os.path.join(save_dir, 'training_time.csv'), sep=';')
 
         pd.DataFrame(
             testing_times_list, columns=k_list, index=np.array(training_set_sizes)).to_csv(
-                os.path.join(save_dir, 'testing_time.csv'), sep=';')
+            os.path.join(save_dir, 'testing_time.csv'), sep=';')
 
 
 if __name__ == '__main__':
     test_pca(True)
-

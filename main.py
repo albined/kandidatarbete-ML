@@ -1,6 +1,5 @@
 import os
 import sys
-import time
 import warnings
 from PyQt5.QtGui import QIntValidator
 from PyQt5.QtCore import QThread, pyqtSignal, Qt, QSize
@@ -129,7 +128,6 @@ class MainWindow(QMainWindow):
         self.setWindowTitle('Demo')
         self.show()
 
-
         # self.setLayout(self.layout)
         self.import_image(False, os.path.join(tools.get_project_root(), 'svd_image_compression', 'zelda.png'))
 
@@ -213,8 +211,6 @@ class MainWindow(QMainWindow):
         self.worker_pca.finished.connect(self.worker_pca.deleteLater)
         self.worker_pca.start()
 
-
-
     def import_image(self, state, file_name=None):
         if file_name is None:
             file_name, _ = QFileDialog.getOpenFileName(self, "Open Image", "", "Image Files (*.png *.jpg *.bmp)")
@@ -224,7 +220,6 @@ class MainWindow(QMainWindow):
             pixmap = QPixmap(file_name)
             self.svd_image_label.setPixmap(
                 pixmap.scaled(self.svd_image_label.size(), QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation))
-
 
     def run_svd(self):
         input_path = self.svd_image_path
@@ -239,12 +234,10 @@ class MainWindow(QMainWindow):
         self.worker_svd.start()
         # call the function that handles the SVD image compression
 
-
     def update_result_image(self, path):
         pixmap = QPixmap(path)
         self.svd_image_output_label.setPixmap(
             pixmap.scaled(self.svd_image_label.size(), QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation))
-
 
     def checkbox_clicked(self, n):
         for idx, checkbox in enumerate(self.nn_checkboxes):
@@ -328,6 +321,7 @@ class SVDWorker(QThread):
             sys.excepthook(e.__class__, e, sys.exc_info()[2])
             self.exit()
         self.finished.emit(result)
+
 
 class NormalWorker(QThread):
     finished = pyqtSignal()
