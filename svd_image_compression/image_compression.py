@@ -3,6 +3,7 @@ from PIL import Image
 import numpy as np
 import extra_filer.extra_tools as tools
 
+
 def read_image(path='zelda.png'):
     img = Image.open(path)
     img_array = np.array(img)
@@ -35,10 +36,3 @@ def compress_image(path, k):
     compressed_img.save(save_name)
 
     return save_name
-
-
-if __name__ == '__main__':
-    starting_image = 'zelda.png'
-    k_list = [1, 5, 20, 100, 300, -1]
-    for k in k_list:
-        compress_image(starting_image, k)
