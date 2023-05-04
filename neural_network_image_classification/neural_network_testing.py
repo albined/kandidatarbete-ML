@@ -424,16 +424,3 @@ def plot_joel_pca_matrix():
     fig.tight_layout()
     plt.show()
 
-
-if __name__ == '__main__':
-    # test_score_matrix(onlytest=True)
-    # test_u_v_matrix('V')
-    # test_u_v_matrix('U')
-    # test_normal_matrix()
-    # test_cnn_matrix(onlytest=False)
-    # plot_result_matrix('score')
-    # plot_result_matrix('U')
-    # plot_result_matrix('V')
-    # plot_normal_result()
-    # plot_cnn_result()
-    pass
