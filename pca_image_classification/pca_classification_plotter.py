@@ -12,13 +12,6 @@ def plot_results():
     testing_time = pd.read_csv(os.path.join(tools.get_project_root(), 'pca_image_classification', 'results', f'testing_time.csv'), sep=';', index_col=0)
     training_time = pd.read_csv(os.path.join(tools.get_project_root(), 'pca_image_classification', 'results', f'training_time.csv'), sep=';', index_col=0)
 
-    # If we want to filter what lines
-    # selected_layer_sizes = [-1, -2, -3]
-    # selected_layer_sizes = [10000, 30000, 60000]
-    # testing_accuracy = testing_accuracy.loc[selected_layer_sizes]
-    # testing_time = testing_time.loc[selected_layer_sizes]
-    # training_time = training_time.loc[selected_layer_sizes]
-
     fig, axs = plt.subplots(1, 3, figsize=(12, 4))
 
     x = [int(v) for v in testing_accuracy.columns]
@@ -48,7 +41,6 @@ def plot_results():
     axs[1].set_ylabel('tid (s)')
     # axs[1].set_ylim([0, 4])
     axs[1].set_title('Träningstid för olika stora träningsset och k')
-
 
     # Plotting the testing time
     testing_time = testing_time * 1000
