@@ -216,24 +216,6 @@ def calculate_predictions(pca: GeneralPCA, labels_train, labels_test, k_list: li
     return accuracies, training_times, testing_times
 
 
-def test_so_that_all_pca_methods_give_the_same_resutl():
-    np.random.seed(10)
-    training = np.random.rand(10, 6)
-    np.random.seed(12)
-    testing = np.random.rand(1, 6)
-    pca1 = CovariancePCA(training, testing)
-    pca2 = SvdPCA(training, testing)
-    pca3 = SklearnPCA(training, testing)
-    a1, _, a2, _ = pca1.get_components(2)
-    b1, _, b2, _ = pca2.get_components(2)
-    c1, _, c2, _ = pca3.get_components(2)
-    assert np.allclose(a1, b1)
-    assert np.allclose(a1, c1)
-    assert np.allclose(a2, b2)
-    assert np.allclose(a2, c2)
-    # This does not always compute since the sign of the eigenvectors are arbitrary
-
-
 def test_pca(save=True, training_set_sizes=None, k_list=None):
     # training_set_sizes = [-1, -2, -3, 1000, 5000, 10000, 30000, 60000]
     if training_set_sizes is None:
