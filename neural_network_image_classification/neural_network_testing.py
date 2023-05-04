@@ -350,10 +350,10 @@ def test_joel_pca_matrix():
         for j, k in enumerate(k_list):
             print(f'Training network with k={k}, hidden_layer_size={hidden_layer_size}')
             # Calls on test_pca_nn for train and test the nn
-            testing_accuracy, training_time, testing_time = neural_network_training.test_joel_pca_nn(k, epochs=10,
-                                                                                                     hidden_layer_size=hidden_layer_size,
-                                                                                                     train=train_data,
-                                                                                                     test=test_data)
+            testing_accuracy, training_time, testing_time = \
+                neural_network_training.test_joel_pca_nn(k, epochs=10,
+                                                         hidden_layer_size=hidden_layer_size,
+                                                         train=train_data, test=test_data)
             # Stores the results to later save in a csv file
             training_time_array[i, j] = training_time
             testing_time_array[i, j] = testing_time

@@ -30,19 +30,26 @@ def create_pca_library(train_set, label_train, test_set, label_test, principal_c
     tl.stop()
 
     if save_folder is not None:
-        append_matrix_to_csv(pca_train, f'pca_transformed_training_{dataset_name}_k={principal_components}.csv',
-                             relative_root=True, folder=os.path.join(save_folder,
-                                                                     f'pca_transformed_{dataset_name}_k={principal_components}'))
-        append_matrix_to_csv(pca_test, f'pca_transformed_testing_{dataset_name}_k={principal_components}.csv',
-                             relative_root=True, folder=os.path.join(save_folder,
-                                                                     f'pca_transformed_{dataset_name}_k={principal_components}'))
+        append_matrix_to_csv(pca_train,
+                             f'pca_transformed_training_{dataset_name}_k={principal_components}.csv',
+                             relative_root=True,
+                             folder=os.path.join(save_folder,
+                                                 f'pca_transformed_{dataset_name}_k={principal_components}'))
+        append_matrix_to_csv(pca_test,
+                             f'pca_transformed_testing_{dataset_name}_k={principal_components}.csv',
+                             relative_root=True,
+                             folder=os.path.join(save_folder,
+                                                 f'pca_transformed_{dataset_name}_k={principal_components}'))
         append_matrix_to_csv(label_train,
                              f'labels_svd_transformed_training_{dataset_name}_k={principal_components}.csv',
-                             relative_root=True, folder=os.path.join(save_folder,
-                                                                     f'pca_transformed_{dataset_name}_k={principal_components}'))
-        append_matrix_to_csv(label_test, f'labels_svd_transformed_testing_{dataset_name}_k={principal_components}.csv',
-                             relative_root=True, folder=os.path.join(save_folder,
-                                                                     f'pca_transformed_{dataset_name}_k={principal_components}'))
+                             relative_root=True,
+                             folder=os.path.join(save_folder,
+                                                 f'pca_transformed_{dataset_name}_k={principal_components}'))
+        append_matrix_to_csv(label_test,
+                             f'labels_svd_transformed_testing_{dataset_name}_k={principal_components}.csv',
+                             relative_root=True,
+                             folder=os.path.join(save_folder,
+                                                 f'pca_transformed_{dataset_name}_k={principal_components}'))
 
 
 def create_svd_libaries(train_set, label_train, test_set, label_test, truncation: int, save_folder=None,
