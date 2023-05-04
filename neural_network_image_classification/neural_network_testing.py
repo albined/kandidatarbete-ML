@@ -62,10 +62,8 @@ def test_u_v_matrix(u_v, onlytest=False, hidden_layer_sizes=None, k_list=None):
             print(f'Testing network with k={k}, hidden_layer_size={hidden_layer_size}')
             if not onlytest:
                 training_time = neural_network_training.train_svd_nn(k, u_v, hidden_layer_size=hidden_layer_size)
-            testing_accuracy, testing_time = neural_network_training.test_svd_nn(k, u_v,
-                                                                                 hidden_layer_size=hidden_layer_size,
-                                                                                 tests=10)
-
+            testing_accuracy, testing_time = \
+                neural_network_training.test_svd_nn(k, u_v, hidden_layer_size=hidden_layer_size, tests=10)
             if not onlytest:
                 training_time_array[i, j] = training_time
             testing_time_array[i, j] = testing_time
@@ -132,8 +130,8 @@ def test_cnn_matrix(onlytest=False, linear_layer_sizes=None, convolutional_layer
             print(f'Testing network with fcc={linear_layer_size}, cn2d={convolutional_layer_size}')
             if not onlytest:
                 training_time = \
-                    neural_network_training.train_cnn_mnist_nn(linear_layer_size=linear_layer_size,
-                                                               convolutional_layer_size=convolutional_layer_size)
+                    neural_network_training.train_cnn_mnist_nn(
+                        linear_layer_size=linear_layer_size, convolutional_layer_size=convolutional_layer_size)
             testing_accuracy, testing_time = neural_network_training.test_cnn_mnist_nn(
                 linear_layer_size=linear_layer_size, convolutional_layer_size=convolutional_layer_size, tests=10)
 
