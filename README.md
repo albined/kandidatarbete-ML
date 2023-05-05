@@ -1,7 +1,5 @@
 # Machine learning for image recognition using Neural Networks and PCA
 
-Skriv en description här
-
 ## Installation
 Clone the project and install the requirements to your environment:
 
